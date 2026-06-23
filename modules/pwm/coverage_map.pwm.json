@@ -1,77 +1,335 @@
 {
   "module": "PWM",
   "source_file": "cm_atcmd_pwm.c",
-  "total_stubs": 43,
+  "total_stubs": 53,
   "stmt_count": 43,
   "branch_count": 23,
-  "stmt_range": [0, 42],
-  "branch_range": [30, 52],
+  "stmt_range": [
+    0,
+    42
+  ],
+  "branch_range": [
+    30,
+    52
+  ],
   "stubs": {
-    "0": {"func": "cmMPWMCFG", "type": "stmt", "line": 40, "context": "函数入口"},
-    "1": {"func": "cmMPWMCFG", "type": "stmt", "line": 55, "context": "GET_CMD 处理"},
-    "2": {"func": "cmMPWMCFG", "type": "stmt", "line": 62, "context": "SET_CMD 处理"},
-    "3": {"func": "cmMPWMCFG", "type": "stmt", "line": 66, "context": "channel 参数解析前"},
-    "4": {"func": "cmMPWMCFG", "type": "stmt", "line": 69, "context": "channel 解析失败"},
-    "5": {"func": "cmMPWMCFG", "type": "stmt", "line": 73, "context": "clk 参数解析前"},
-    "6": {"func": "cmMPWMCFG", "type": "stmt", "line": 76, "context": "clk 解析失败"},
-    "7": {"func": "cmMPWMCFG", "type": "stmt", "line": 80, "context": "is_default 检查前"},
-    "8": {"func": "cmMPWMCFG", "type": "stmt", "line": 83, "context": "is_default 为 true"},
-    "9": {"func": "cmMPWMCFG", "type": "stmt", "line": 87, "context": "设置 clk"},
-    "10": {"func": "cmMPWMCFG", "type": "stmt", "line": 93, "context": "default 处理"},
-    "11": {"func": "cmMPWMCFG", "type": "stmt", "line": 97, "context": "函数返回前"},
-    "12": {"func": "cmMPWMDATA", "type": "stmt", "line": 102, "context": "函数入口"},
-    "13": {"func": "cmMPWMDATA", "type": "stmt", "line": 117, "context": "GET_CMD 处理"},
-    "14": {"func": "cmMPWMDATA", "type": "stmt", "line": 128, "context": "TEST_CMD 处理"},
-    "15": {"func": "cmMPWMDATA", "type": "stmt", "line": 137, "context": "SET_CMD 处理"},
-    "16": {"func": "cmMPWMDATA", "type": "stmt", "line": 142, "context": "channel 参数解析前"},
-    "17": {"func": "cmMPWMDATA", "type": "stmt", "line": 145, "context": "channel 解析失败"},
-    "18": {"func": "cmMPWMDATA", "type": "stmt", "line": 151, "context": "period 参数解析前"},
-    "19": {"func": "cmMPWMDATA", "type": "stmt", "line": 154, "context": "period 解析失败"},
-    "20": {"func": "cmMPWMDATA", "type": "stmt", "line": 158, "context": "duty 参数解析前"},
-    "21": {"func": "cmMPWMDATA", "type": "stmt", "line": 161, "context": "duty 解析失败"},
-    "22": {"func": "cmMPWMDATA", "type": "stmt", "line": 165, "context": "is_default 检查前"},
-    "23": {"func": "cmMPWMDATA", "type": "stmt", "line": 168, "context": "is_default 为 true"},
-    "24": {"func": "cmMPWMDATA", "type": "stmt", "line": 172, "context": "设置 period/duty"},
-    "25": {"func": "cmMPWMDATA", "type": "stmt", "line": 178, "context": "default 处理"},
-    "26": {"func": "cmMPWMDATA", "type": "stmt", "line": 182, "context": "函数返回前"},
-    "27": {"func": "cmMPWMCTRL", "type": "stmt", "line": 187, "context": "函数入口"},
-    "28": {"func": "cmMPWMCTRL", "type": "stmt", "line": 203, "context": "TEST_CMD 处理"},
-    "29": {"func": "cmMPWMCTRL", "type": "stmt", "line": 212, "context": "SET_CMD 处理"},
-    "30": {"func": "cmMPWMCTRL", "type": "stmt", "line": 218, "context": "channel 参数解析前"},
-    "31": {"func": "cmMPWMCTRL", "type": "stmt", "line": 221, "context": "channel 解析失败"},
-    "32": {"func": "cmMPWMCTRL", "type": "stmt", "line": 226, "context": "onoff 参数解析前"},
-    "33": {"func": "cmMPWMCTRL", "type": "stmt", "line": 229, "context": "onoff 解析失败"},
-    "34": {"func": "cmMPWMCTRL", "type": "stmt", "line": 233, "context": "onoff 判断前"},
-    "35": {"func": "cmMPWMCTRL", "type": "stmt", "line": 236, "context": "onoff 为 true"},
-    "36": {"func": "cmMPWMCTRL", "type": "stmt", "line": 239, "context": "period > 4000"},
-    "37": {"func": "cmMPWMCTRL", "type": "stmt", "line": 243, "context": "period <= 4000"},
-    "38": {"func": "cmMPWMCTRL", "type": "stmt", "line": 247, "context": "cm_pwm_enable 调用前"},
-    "39": {"func": "cmMPWMCTRL", "type": "stmt", "line": 250, "context": "cm_pwm_enable 失败"},
-    "40": {"func": "cmMPWMCTRL", "type": "stmt", "line": 254, "context": "onoff 为 false"},
-    "41": {"func": "cmMPWMCTRL", "type": "stmt", "line": 261, "context": "default 处理"},
-    "42": {"func": "cmMPWMCTRL", "type": "stmt", "line": 265, "context": "函数返回前"},
-    "30": {"func": "cmMPWMCFG", "type": "branch_true", "line": 55, "context": "TEL_EXT_GET_CMD"},
-    "31": {"func": "cmMPWMCFG", "type": "branch_true", "line": 62, "context": "TEL_EXT_SET_CMD"},
-    "32": {"func": "cmMPWMCFG", "type": "branch_true", "line": 68, "context": "channel 解析失败"},
-    "33": {"func": "cmMPWMCFG", "type": "branch_true", "line": 75, "context": "clk 解析失败"},
-    "34": {"func": "cmMPWMCFG", "type": "branch_true", "line": 82, "context": "is_default 为 true"},
-    "35": {"func": "cmMPWMCFG", "type": "branch_false", "line": 92, "context": "switch default"},
-    "36": {"func": "cmMPWMDATA", "type": "branch_true", "line": 117, "context": "TEL_EXT_GET_CMD"},
-    "37": {"func": "cmMPWMDATA", "type": "branch_true", "line": 128, "context": "TEL_EXT_TEST_CMD"},
-    "38": {"func": "cmMPWMDATA", "type": "branch_true", "line": 137, "context": "TEL_EXT_SET_CMD"},
-    "39": {"func": "cmMPWMDATA", "type": "branch_true", "line": 144, "context": "channel 解析失败"},
-    "40": {"func": "cmMPWMDATA", "type": "branch_true", "line": 153, "context": "period 解析失败"},
-    "41": {"func": "cmMPWMDATA", "type": "branch_true", "line": 160, "context": "duty 解析失败"},
-    "42": {"func": "cmMPWMDATA", "type": "branch_true", "line": 167, "context": "is_default 为 true"},
-    "43": {"func": "cmMPWMDATA", "type": "branch_false", "line": 177, "context": "switch default"},
-    "44": {"func": "cmMPWMCTRL", "type": "branch_true", "line": 199, "context": "TEL_EXT_GET_CMD"},
-    "45": {"func": "cmMPWMCTRL", "type": "branch_true", "line": 203, "context": "TEL_EXT_TEST_CMD"},
-    "46": {"func": "cmMPWMCTRL", "type": "branch_true", "line": 212, "context": "TEL_EXT_SET_CMD"},
-    "47": {"func": "cmMPWMCTRL", "type": "branch_true", "line": 220, "context": "channel 解析失败"},
-    "48": {"func": "cmMPWMCTRL", "type": "branch_true", "line": 228, "context": "onoff 解析失败"},
-    "49": {"func": "cmMPWMCTRL", "type": "branch_true", "line": 235, "context": "onoff 为 true"},
-    "50": {"func": "cmMPWMCTRL", "type": "branch_true", "line": 238, "context": "period > 4000"},
-    "51": {"func": "cmMPWMCTRL", "type": "branch_true", "line": 249, "context": "cm_pwm_enable 失败"},
-    "52": {"func": "cmMPWMCTRL", "type": "branch_false", "line": 260, "context": "switch default"}
+    "0": {
+      "func": "cmMPWMCFG",
+      "type": "stmt",
+      "line": 40,
+      "context": "函数入口"
+    },
+    "1": {
+      "func": "cmMPWMCFG",
+      "type": "stmt",
+      "line": 55,
+      "context": "GET_CMD 处理"
+    },
+    "2": {
+      "func": "cmMPWMCFG",
+      "type": "stmt",
+      "line": 62,
+      "context": "SET_CMD 处理"
+    },
+    "3": {
+      "func": "cmMPWMCFG",
+      "type": "stmt",
+      "line": 66,
+      "context": "channel 参数解析前"
+    },
+    "4": {
+      "func": "cmMPWMCFG",
+      "type": "stmt",
+      "line": 69,
+      "context": "channel 解析失败"
+    },
+    "5": {
+      "func": "cmMPWMCFG",
+      "type": "stmt",
+      "line": 73,
+      "context": "clk 参数解析前"
+    },
+    "6": {
+      "func": "cmMPWMCFG",
+      "type": "stmt",
+      "line": 76,
+      "context": "clk 解析失败"
+    },
+    "7": {
+      "func": "cmMPWMCFG",
+      "type": "stmt",
+      "line": 80,
+      "context": "is_default 检查前"
+    },
+    "8": {
+      "func": "cmMPWMCFG",
+      "type": "stmt",
+      "line": 83,
+      "context": "is_default 为 true"
+    },
+    "9": {
+      "func": "cmMPWMCFG",
+      "type": "stmt",
+      "line": 87,
+      "context": "设置 clk"
+    },
+    "10": {
+      "func": "cmMPWMCFG",
+      "type": "stmt",
+      "line": 93,
+      "context": "default 处理"
+    },
+    "11": {
+      "func": "cmMPWMCFG",
+      "type": "stmt",
+      "line": 97,
+      "context": "函数返回前"
+    },
+    "12": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 102,
+      "context": "函数入口"
+    },
+    "13": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 117,
+      "context": "GET_CMD 处理"
+    },
+    "14": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 128,
+      "context": "TEST_CMD 处理"
+    },
+    "15": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 137,
+      "context": "SET_CMD 处理"
+    },
+    "16": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 142,
+      "context": "channel 参数解析前"
+    },
+    "17": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 145,
+      "context": "channel 解析失败"
+    },
+    "18": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 151,
+      "context": "period 参数解析前"
+    },
+    "19": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 154,
+      "context": "period 解析失败"
+    },
+    "20": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 158,
+      "context": "duty 参数解析前"
+    },
+    "21": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 161,
+      "context": "duty 解析失败"
+    },
+    "22": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 165,
+      "context": "is_default 检查前"
+    },
+    "23": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 168,
+      "context": "is_default 为 true"
+    },
+    "24": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 172,
+      "context": "设置 period/duty"
+    },
+    "25": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 178,
+      "context": "default 处理"
+    },
+    "26": {
+      "func": "cmMPWMDATA",
+      "type": "stmt",
+      "line": 182,
+      "context": "函数返回前"
+    },
+    "27": {
+      "func": "cmMPWMCTRL",
+      "type": "stmt",
+      "line": 187,
+      "context": "函数入口"
+    },
+    "28": {
+      "func": "cmMPWMCTRL",
+      "type": "stmt",
+      "line": 203,
+      "context": "TEST_CMD 处理"
+    },
+    "29": {
+      "func": "cmMPWMCTRL",
+      "type": "stmt",
+      "line": 212,
+      "context": "SET_CMD 处理"
+    },
+    "30": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 337,
+      "context": "channel 参数解析前 (ML307R)"
+    },
+    "31": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_false",
+      "line": 341,
+      "context": "channel 解析失败 (ML307R)"
+    },
+    "32": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 349,
+      "context": "onoff 参数解析前"
+    },
+    "33": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_false",
+      "line": 353,
+      "context": "onoff 解析失败"
+    },
+    "34": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 359,
+      "context": "onoff 判断前"
+    },
+    "35": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 366,
+      "context": "onoff 为 true"
+    },
+    "36": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 370,
+      "context": "period > 4000"
+    },
+    "37": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 376,
+      "context": "period <= 4000"
+    },
+    "38": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 380,
+      "context": "cm_pwm_enable 调用前"
+    },
+    "39": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_false",
+      "line": 386,
+      "context": "cm_pwm_enable 失败"
+    },
+    "40": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 394,
+      "context": "onoff 为 false"
+    },
+    "41": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_false",
+      "line": 406,
+      "context": "default 处理"
+    },
+    "42": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 412,
+      "context": "函数返回前"
+    },
+    "43": {
+      "func": "cmMPWMDATA",
+      "type": "branch_false",
+      "line": 177,
+      "context": "switch default"
+    },
+    "44": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 199,
+      "context": "TEL_EXT_GET_CMD"
+    },
+    "45": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 203,
+      "context": "TEL_EXT_TEST_CMD"
+    },
+    "46": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 212,
+      "context": "TEL_EXT_SET_CMD"
+    },
+    "47": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 220,
+      "context": "channel 解析失败"
+    },
+    "48": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 228,
+      "context": "onoff 解析失败"
+    },
+    "49": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 235,
+      "context": "onoff 为 true"
+    },
+    "50": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 238,
+      "context": "period > 4000"
+    },
+    "51": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_true",
+      "line": 249,
+      "context": "cm_pwm_enable 失败"
+    },
+    "52": {
+      "func": "cmMPWMCTRL",
+      "type": "branch_false",
+      "line": 260,
+      "context": "switch default"
+    }
   }
 }
