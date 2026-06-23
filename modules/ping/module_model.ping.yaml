@@ -1,0 +1,300 @@
+module: PING
+version: draft-0.1
+source_documents:
+  - document: TCP_IP用户手册.pdf
+    pages: [57, 58, 59, 73]
+    section: 3.18 AT+MPING PING服务器
+
+# 状态机
+state_machine:
+  PING_IDLE:
+    description: 初始状态，无活跃 ping 会话
+    transitions:
+      - to: PING_RUNNING
+        trigger: AT+MPING=<host>
+        condition: PDP_ACTIVE
+  PING_RUNNING:
+    description: ping 正在执行
+    transitions:
+      - to: PING_IDLE
+        trigger: ping 完成或超时
+  PING_IDLE:
+    from: [PING_RUNNING]
+
+# 命令定义
+commands:
+  - command: AT+MPING
+    summary: 发送 ICMP 包到服务器
+    kind: set
+    source_refs:
+      - document: TCP_IP用户手册.pdf
+        page: 57
+        section: 3.18
+
+    syntax:
+      test: AT+MPING=?
+      set: AT+MPING=<host>[,<timeout>[,<ping_num>[,<packet_len>[,<cid>]]]]
+
+    parameters:
+      - name: host
+        type: string
+        required: true
+        max_length: 255
+        description: 服务器地址，域名或 IP
+        examples:
+          - "8.8.8.8"
+          - "www.baidu.com"
+          - "ipv6.sjtu.edu.cn"
+
+      - name: timeout
+        type: integer
+        required: false
+        range: [1, 60]
+        default: 10
+        unit: seconds
+        description: ping 超时时间
+
+      - name: ping_num
+        type: integer
+        required: false
+        range: [1, 65535]
+        default: 4
+        description: ping 次数
+
+      - name: packet_len
+        type: integer
+        required: false
+        range: [1, 1400]
+        default: 16
+        unit: bytes
+        description: ping 包大小
+
+      - name: cid
+        type: integer
+        required: false
+        range: [0, 15]
+        description: PDP 上下文索引号
+
+    responses:
+      test:
+        success:
+          - pattern: "+MPING: ,(1-60),(1-65535),(1-1400)"
+          - pattern: OK
+        error:
+          - pattern: "+CME ERROR: <err>"
+
+      set:
+        success:
+          - pattern: OK
+        error:
+          - pattern: "+CME ERROR: <err>"
+
+    urcs:
+      - name: ping_result
+        pattern: "+MPING: <result>[,<ip>,<packet_len>,<time>,<ttl>]"
+        description: 单次 ping 结果
+        fields:
+          - name: result
+            type: integer
+            values:
+              0: 成功
+              1: DNS 解析失败
+              2: DNS 解析超时
+              3: 响应错误
+              4: 响应超时
+              5: 其他错误
+          - name: ip
+            type: string
+            description: 服务器 IP 地址
+          - name: packet_len
+            type: integer
+            description: 包大小
+          - name: time
+            type: integer
+            unit: ms
+            description: 响应时间
+          - name: ttl
+            type: integer
+            description: 路由跳转次数
+
+      - name: ping_statistics
+        pattern: '+MPING: "statistics",<sent>,<lost>,<rtt_min>,<rtt_max>,<rtt_avg>'
+        description: 多次 ping 统计数据（ping_num > 1 时）
+        condition: ping_num > 1
+        fields:
+          - name: sent
+            type: integer
+            description: 发送次数
+          - name: lost
+            type: integer
+            description: 丢包次数
+          - name: rtt_min
+            type: integer
+            unit: ms
+            description: 最小响应时间
+          - name: rtt_max
+            type: integer
+            unit: ms
+            description: 最大响应时间
+          - name: rtt_avg
+            type: integer
+            unit: ms
+            description: 平均响应时间
+
+    preconditions:
+      - PDP_ACTIVE
+
+    postconditions:
+      - PING_IDLE
+
+# 测试生成规则
+test_generation_rules:
+  # 正向流程
+  - rule: positive_basic_ping
+    description: 基本 ping 测试
+    template: |
+      AT+MPING="<host>"
+    expect:
+      - pattern: OK
+      - pattern: "+MPING: 0,"
+        async: true
+        timeout_ms: 30000
+
+  - rule: positive_single_ping
+    description: 单次 ping
+    template: |
+      AT+MPING="<host>",10,1
+    expect:
+      - pattern: OK
+      - pattern: "+MPING: 0,"
+        async: true
+        timeout_ms: 30000
+
+  - rule: positive_multiple_ping
+    description: 多次 ping 带统计
+    template: |
+      AT+MPING="<host>",10,4
+    expect:
+      - pattern: OK
+      - pattern: "+MPING: 0,"
+        async: true
+        timeout_ms: 60000
+      - pattern: '+MPING: "statistics",'
+        async: true
+        timeout_ms: 60000
+
+  # 参数边界
+  - rule: boundary_timeout_min
+    description: timeout 最小值
+    template: |
+      AT+MPING="<host>",1,1
+
+  - rule: boundary_timeout_max
+    description: timeout 最大值
+    template: |
+      AT+MPING="<host>",60,1
+
+  - rule: boundary_timeout_below_min
+    description: timeout 越界（应返回错误）
+    template: |
+      AT+MPING="<host>",0,1
+    expect_error: true
+
+  - rule: boundary_timeout_above_max
+    description: timeout 越界（应返回错误）
+    template: |
+      AT+MPING="<host>",61,1
+    expect_error: true
+
+  - rule: boundary_packet_len_min
+    description: packet_len 最小值
+    template: |
+      AT+MPING="<host>",10,1,1
+
+  - rule: boundary_packet_len_max
+    description: packet_len 最大值
+    template: |
+      AT+MPING="<host>",10,1,1400
+
+  - rule: boundary_packet_len_below_min
+    description: packet_len 越界（应返回错误）
+    template: |
+      AT+MPING="<host>",10,1,0
+    expect_error: true
+
+  - rule: boundary_packet_len_above_max
+    description: packet_len 越界（应返回错误）
+    template: |
+      AT+MPING="<host>",10,1,1401
+    expect_error: true
+
+  # 负向用例
+  - rule: negative_invalid_host
+    description: 无效主机名
+    template: |
+      AT+MPING="invalid.host.xyz"
+    expect:
+      - pattern: OK
+      - pattern: "+MPING: 1"  # DNS 解析失败
+        async: true
+        timeout_ms: 30000
+
+  - rule: negative_empty_host
+    description: 空主机名
+    template: |
+      AT+MPING=""
+    expect_error: true
+
+  - rule: negative_timeout_result
+    description: 超时场景（极短 timeout）
+    template: |
+      AT+MPING="8.8.8.8",1,1
+    expect:
+      - pattern: OK
+      - pattern: "+MPING: 4"  # 响应超时
+        async: true
+        timeout_ms: 10000
+
+# 覆盖率映射提示
+coverage_mapping_hints:
+  - function: cm_at_ping_cmd
+    description: AT+MPING 命令处理函数
+    file: cm_atcmd_ping.c
+    key_paths:
+      - 参数解析（host, timeout, ping_num, packet_len, cid）
+      - DNS 解析
+      - ICMP 发送
+      - 结果处理
+      - 统计数据计算
+
+# 示例
+example_generated_tests:
+  - id: PING_BASIC_GOOGLE
+    purpose: ping Google DNS
+    at_command: AT+MPING="8.8.8.8"
+    expect:
+      - pattern: OK
+      - pattern: "+MPING: 0,"
+        async: true
+        timeout_ms: 30000
+
+  - id: PING_SINGLE_BAIDU
+    description: 单次 ping 百度
+    at_command: AT+MPING="www.baidu.com",10,1
+    expect:
+      - pattern: OK
+      - pattern: "+MPING: 0,"
+        async: true
+        timeout_ms: 30000
+
+  - id: PING_MULTIPLE_WITH_STATS
+    description: 多次 ping 带统计
+    at_command: AT+MPING="8.8.8.8",10,4
+    expect:
+      - pattern: OK
+      - pattern: "+MPING: 0,"
+        async: true
+        timeout_ms: 60000
+      - pattern: '+MPING: "statistics",'
+        async: true
+        timeout_ms: 60000

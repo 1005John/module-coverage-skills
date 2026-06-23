@@ -1,0 +1,91 @@
+中移物联网有限公司
+3.18. AT+MPING PING服务器
+该命令用于发送ICMP包到服务器。
+AT+MPING
+语法
+响应
+测试命令
+AT+MPING=?
+成功
++MPING: ,(list of supported <timeout>s),(list of supported <ping_num>s),(list of supported 
+ <packet_len>s),(list of supported <cid>s)
+OK
+失败
++CME ERROR: <err>
+设置命令
+AT
++MPING=<host>[,<timeout>[,
+<ping_num>[,<packet_len>[,
+<cid>]]]]
+成功
+OK
+失败
++CME ERROR: <err>
+URC（ping包发送结果）
++MPING: <result>[,<ip>,<packet_len>,<time>,<ttl>]
+[+MPING: <result>[,<ip>,<packet_len>,<time>,<ttl>][...]]
+URC（<ping_num>大于1时，
+响应统计数据）
++MPING: "statistics",<sent>,<lost>,<rtt_min>,<rtt_max>,<rtt_avg>
+命令描述
+该命令用于发送ICMP包到服务器。<ping_num>  = 1时，响应结果只有单包响应结果+MPING: 
+<result>[,<ip>,<packet_len>,<time>,<ttl>]。<ping_num>>1时，响应结果最后还将上报多包的统计数据+MPING: 
+"statistics",<sent>,<lost>,<rtt_min>,<rtt_max>,<rtt_avg>。
+参数描述
+<host>字符串，服务器地址，字符串形式的域名或IP，最大长度255字节。
+<timeout>整型，ping超时时间，范围：1~60；单位：s。默认值10s。
+<ping_num>整型，ping次数，范围：1~65535。默认值4。
+<packet_len>整型，ping包大小，范围：1~1400；单位：字节。默认值16。
+<cid>整型，PDP上下文索引号，范围与AT+CGDCONT命令支持的范围相同，默认不指定，指定时需保证指定
+cid已激活。47
+<result>整型，每次ping的结果。
+0
+47.
+MN316/MN316-S/MN316A/MN326A/MN319/MN319-A/MN326/ML307H/MR880A：暂不支持<cid>参数的配置，默认不指定。
+4G系列：默认为1。其中，ML307B：默认不指定，指定时需要保证指定cid已激活。
+57
+中移物联网有限公司
+AT+MPING
+成功
+1
+DNS 解析失败
+2
+DNS 解析超时
+3
+响应错误
+4
+响应超时
+5
+其他错误
+<ip>字符串，服务器IP地址。
+<time>整型，ping包响应时长，单位：ms。
+<ttl>整型，ping包路由跳转次数。
+<sent>整型，发送ping包次数。
+<lost>整型，丢包次数。
+<rtt_min>整型，最小响应时间，单位：ms。
+<rtt_max>整型，最大响应时间，单位：ms。
+<rtt_avg>整型，平均响应时间，单位：ms。
+示例
+测试命令
+AT+MPING=?
++MPING: ,(1-60),(1-65535),(1-1400)
+OK
+PING服务器
+AT+MPING="ipv6.sjtu.edu.cn"   //AT+MDNSCFG="priority"配置为IPv4优先则PING IPv4地址
+OK
++MPING: 0,"202.120.35.204",16,607,235
++MPING: 0,"202.120.35.204",16,334,235
++MPING: 0,"202.120.35.204",16,347,235
++MPING: 0,"202.120.35.204",16,320,235
++MPING: "statistics",4,0,320,607,402
+AT+MPING="ipv6.sjtu.edu.cn"   //AT+MDNSCFG="priority"配置为IPv6优先则PING IPv6地址
+OK
++MPING: 0,"2001:DA8:8000:1::80",16,548,51
++MPING: 0,"2001:DA8:8000:1::80",16,187,51
++MPING: 0,"2001:DA8:8000:1::80",16,178,51
+58
+中移物联网有限公司
+AT+MPING
++MPING: 0,"2001:DA8:8000:1::80",16,156,51
++MPING: "statistics",4,0,156,548,267
+59

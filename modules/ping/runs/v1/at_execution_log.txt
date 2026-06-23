@@ -1,0 +1,228 @@
+[10:33:21] connected
+[10:33:21] >>> AT+COVERAGE=1
+[10:33:21] <<< OK
+[10:33:21] >>> AT+COVERAGE?
+[10:33:21] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) ALL(0%,0%,1/1488)
+
+OK
+[10:33:21] INIT: {'stmt_percent': 0, 'branch_percent': 0, 'hit_stubs': 0, 'total_stubs': 27, 'raw': '+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) ALL(0%,0%,1/1488)\r\n\r\nOK'}
+[10:33:21] >>> AT+COVERAGE?
+[10:33:21] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) ALL(0%,0%,1/1488)
+
+OK
+[10:33:21] CASE test_cmd
+[10:33:21] >>> AT+MPING=?
+[10:33:22] <<< +MPING: ,(1-60),(1-65535),(1-1400),(1-15)
+
+OK
+[10:33:22] >>> AT+COVERAGE?
+[10:33:22] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(25%,6%,4/27) ALL(0%,0%,5/1488)
+
+OK
+[10:33:22] CASE test_cmd NEW 4 hits=4
+[10:33:22] >>> AT+COVERAGE?
+[10:33:22] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(25%,6%,4/27) ALL(0%,0%,5/1488)
+
+OK
+[10:33:22] CASE ping_basic
+[10:33:22] >>> AT+MPING="8.8.8.8"
+[10:33:22] <<< OK
+
++MPING: 0,"8.8.8.8",16,100,108
+
++MPING: 0,"8.8.8.8",16,70,108
+[10:33:23] <<<URC 
++MPING: 0,"8.8.8.8",16,70,108
+
++MPING: 0,"8.8.8.8",16,75,108
+
++MPING: "statistics",4,0,70,100,78
+
+[10:33:23] >>> AT+COVERAGE?
+[10:33:23] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,73%,22/27) ALL(0%,0%,23/1488)
+
+OK
+[10:33:23] CASE ping_basic NEW 18 hits=22
+[10:33:23] >>> AT+COVERAGE?
+[10:33:23] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,73%,22/27) ALL(0%,0%,23/1488)
+
+OK
+[10:33:23] CASE ping_single
+[10:33:23] >>> AT+MPING="8.8.8.8",10,1
+[10:33:23] <<< OK
+
++MPING: 0,"8.8.8.8",16,100,108
+[10:33:38] >>> AT+COVERAGE?
+[10:33:39] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,73%,22/27) ALL(0%,0%,23/1488)
+
+OK
+[10:33:39] CASE ping_single NEW 0 hits=22
+[10:33:39] >>> AT+COVERAGE?
+[10:33:39] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,73%,22/27) ALL(0%,0%,23/1488)
+
+OK
+[10:33:39] CASE ping_multiple
+[10:33:39] >>> AT+MPING="8.8.8.8",10,3
+[10:33:39] <<< OK
+
++MPING: 0,"8.8.8.8",16,90,108
+
++MPING: 0,"8.8.8.8",16,80,108
+[10:33:39] <<<URC 
++MPING: 0,"8.8.8.8",16,80,108
+
++MPING: "statistics",3,0,80,90,83
+
+[10:33:39] >>> AT+COVERAGE?
+[10:33:39] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,73%,22/27) ALL(0%,0%,23/1488)
+
+OK
+[10:33:39] CASE ping_multiple NEW 0 hits=22
+[10:33:39] >>> AT+COVERAGE?
+[10:33:40] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,73%,22/27) ALL(0%,0%,23/1488)
+
+OK
+[10:33:40] CASE timeout_min
+[10:33:40] >>> AT+MPING="8.8.8.8",1,1
+[10:33:40] <<< OK
+
++MPING: 0,"8.8.8.8",16,75,108
+[10:33:55] >>> AT+COVERAGE?
+[10:33:55] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,73%,22/27) ALL(0%,0%,23/1488)
+
+OK
+[10:33:55] CASE timeout_min NEW 0 hits=22
+[10:33:55] >>> AT+COVERAGE?
+[10:33:56] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,73%,22/27) ALL(0%,0%,23/1488)
+
+OK
+[10:33:56] CASE timeout_max
+[10:33:56] >>> AT+MPING="8.8.8.8",60,1
+[10:33:56] <<< OK
+
++MPING: 0,"8.8.8.8",16,85,108
+[10:35:01] >>> AT+COVERAGE?
+[10:35:01] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,73%,22/27) ALL(0%,0%,23/1488)
+
+OK
+[10:35:01] CASE timeout_max NEW 0 hits=22
+[10:35:01] >>> AT+COVERAGE?
+[10:35:01] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,73%,22/27) ALL(0%,0%,23/1488)
+
+OK
+[10:35:01] CASE packet_len_min
+[10:35:01] >>> AT+MPING="8.8.8.8",10,1,1
+[10:35:02] <<< OK
+
++MPING: 0,"8.8.8.8",1,185,108
+[10:35:17] >>> AT+COVERAGE?
+[10:35:17] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,73%,22/27) ALL(0%,0%,23/1488)
+
+OK
+[10:35:17] CASE packet_len_min NEW 0 hits=22
+[10:35:17] >>> AT+COVERAGE?
+[10:35:17] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,73%,22/27) ALL(0%,0%,23/1488)
+
+OK
+[10:35:17] CASE packet_len_max
+[10:35:17] >>> AT+MPING="8.8.8.8",10,1,1400
+[10:35:17] <<< OK
+
++MPING: 0,"8.8.8.8",1400,95,108
+[10:35:33] >>> AT+COVERAGE?
+[10:35:33] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,73%,22/27) ALL(0%,0%,23/1488)
+
+OK
+[10:35:33] CASE packet_len_max NEW 0 hits=22
+[10:35:33] >>> AT+COVERAGE?
+[10:35:33] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,73%,22/27) ALL(0%,0%,23/1488)
+
+OK
+[10:35:33] CASE invalid_host
+[10:35:33] >>> AT+MPING="invalid.host.xyz"
+[10:35:33] <<< OK
+[10:35:34] <<<URC 
++MPING: 1
+
+[10:35:34] >>> AT+COVERAGE?
+[10:35:34] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,80%,23/27) ALL(0%,0%,24/1488)
+
+OK
+[10:35:34] CASE invalid_host NEW 1 hits=23
+[10:35:34] >>> AT+COVERAGE?
+[10:35:34] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,80%,23/27) ALL(0%,0%,24/1488)
+
+OK
+[10:35:34] CASE empty_host
+[10:35:34] >>> AT+MPING=""
+[10:35:35] <<< +CME ERROR: 50
+[10:35:35] >>> AT+COVERAGE?
+[10:35:35] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,80%,23/27) ALL(0%,0%,24/1488)
+
+OK
+[10:35:35] CASE empty_host NEW 0 hits=23
+[10:35:35] >>> AT+COVERAGE?
+[10:35:35] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,80%,23/27) ALL(0%,0%,24/1488)
+
+OK
+[10:35:35] CASE timeout_below_min
+[10:35:35] >>> AT+MPING="8.8.8.8",0,1
+[10:35:35] <<< +CME ERROR: 50
+[10:35:35] >>> AT+COVERAGE?
+[10:35:36] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,80%,23/27) ALL(0%,0%,24/1488)
+
+OK
+[10:35:36] CASE timeout_below_min NEW 0 hits=23
+[10:35:36] >>> AT+COVERAGE?
+[10:35:36] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,80%,23/27) ALL(0%,0%,24/1488)
+
+OK
+[10:35:36] CASE timeout_above_max
+[10:35:36] >>> AT+MPING="8.8.8.8",61,1
+[10:35:36] <<< +CME ERROR: 50
+[10:35:36] >>> AT+COVERAGE?
+[10:35:36] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,80%,23/27) ALL(0%,0%,24/1488)
+
+OK
+[10:35:36] CASE timeout_above_max NEW 0 hits=23
+[10:35:36] >>> AT+COVERAGE?
+[10:35:37] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,80%,23/27) ALL(0%,0%,24/1488)
+
+OK
+[10:35:37] CASE packet_len_below_min
+[10:35:37] >>> AT+MPING="8.8.8.8",10,1,0
+[10:35:37] <<< +CME ERROR: 50
+[10:35:37] >>> AT+COVERAGE?
+[10:35:37] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,80%,23/27) ALL(0%,0%,24/1488)
+
+OK
+[10:35:37] CASE packet_len_below_min NEW 0 hits=23
+[10:35:37] >>> AT+COVERAGE?
+[10:35:37] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,80%,23/27) ALL(0%,0%,24/1488)
+
+OK
+[10:35:37] CASE packet_len_above_max
+[10:35:37] >>> AT+MPING="8.8.8.8",10,1,1401
+[10:35:38] <<< +CME ERROR: 50
+[10:35:38] >>> AT+COVERAGE?
+[10:35:38] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,80%,23/27) ALL(0%,0%,24/1488)
+
+OK
+[10:35:38] CASE packet_len_above_max NEW 0 hits=23
+[10:35:38] >>> AT+COVERAGE?
+[10:35:38] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,80%,23/27) ALL(0%,0%,24/1488)
+
+OK
+[10:35:38] CASE get_cmd
+[10:35:38] >>> AT+MPING?
+[10:35:38] <<< +CME ERROR: 4
+[10:35:38] >>> AT+COVERAGE?
+[10:35:39] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,86%,24/27) ALL(0%,0%,25/1488)
+
+OK
+[10:35:39] CASE get_cmd NEW 1 hits=24
+[10:35:39] >>> AT+COVERAGE?
+[10:35:39] <<< +COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,86%,24/27) ALL(0%,0%,25/1488)
+
+OK
+[10:35:39] FINAL: {'stmt_percent': 91, 'branch_percent': 86, 'hit_stubs': 24, 'total_stubs': 27, 'raw': '+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(91%,86%,24/27) ALL(0%,0%,25/1488)\r\n\r\nOK'}
