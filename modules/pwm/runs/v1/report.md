@@ -1,0 +1,41 @@
+# PWM 模块覆盖率测试 v1
+
+- 初始覆盖率: {'stmt_percent': 0, 'branch_percent': 0, 'hit_stubs': 0, 'total_stubs': 66, 'raw': '+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(0%,0%,0/66) ALL(0%,0%,1/1554)\r\n\r\nOK'}
+- 最终覆盖率: {'stmt_percent': 62, 'branch_percent': 82, 'hit_stubs': 46, 'total_stubs': 66, 'raw': '+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(62%,82%,46/66) ALL(1%,1%,47/1554)\r\n\r\nOK'}
+- 测试用例数: 34
+
+## Case 增量
+- cfg_test: +0
+- cfg_get: +4
+- cfg_set_ch0_clk0: +9
+- cfg_set_ch0_clk1: +0
+- cfg_set_ch1_clk0: +0
+- cfg_set_ch1_clk1: +0
+- cfg_set_ch0_default: +1
+- cfg_set_ch1_default: +0
+- data_test: +4
+- data_get: +4
+- data_set_ch0_100_50: +10
+- data_set_ch0_1000_30: +0
+- data_set_ch1_200_70: +0
+- data_set_ch1_5000_10: +0
+- data_get_ch0: +1
+- data_get_ch1: +0
+- ctrl_test: +0
+- ctrl_get: +1
+- ctrl_enable_ch0: +7
+- ctrl_disable_ch0: +0
+- ctrl_enable_ch1: +0
+- ctrl_disable_ch1: +0
+- data_period_min: +0
+- data_period_max: +0
+- data_duty_min: +0
+- data_duty_max: +0
+- cfg_invalid_channel: +1
+- cfg_invalid_clk: +1
+- data_invalid_channel: +1
+- data_invalid_period_0: +1
+- data_invalid_period_10001: +0
+- data_invalid_duty_101: +1
+- ctrl_invalid_channel: +0
+- ctrl_invalid_onoff: +0

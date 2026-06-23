@@ -1,0 +1,648 @@
+[
+  {
+    "id": "cfg_test",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 0,
+      "branch_percent": 0,
+      "hit_stubs": 0,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(0%,0%,0/66) ALL(0%,0%,1/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 0,
+      "branch_percent": 0,
+      "hit_stubs": 0,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(0%,0%,0/66) ALL(0%,0%,1/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "cfg_get",
+    "response": "+MPWMCNF: 0,0\r\n+MPWMCNF: 1,0\r\n\r\nOK",
+    "before_summary": {
+      "stmt_percent": 0,
+      "branch_percent": 0,
+      "hit_stubs": 0,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(0%,0%,0/66) ALL(0%,0%,1/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 6,
+      "branch_percent": 4,
+      "hit_stubs": 4,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(6%,4%,4/66) ALL(0%,0%,5/1554)\r\n\r\nOK"
+    },
+    "new_hits": 4
+  },
+  {
+    "id": "cfg_set_ch0_clk0",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 6,
+      "branch_percent": 4,
+      "hit_stubs": 4,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(6%,4%,4/66) ALL(0%,0%,5/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 18,
+      "branch_percent": 21,
+      "hit_stubs": 13,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(18%,21%,13/66) ALL(0%,0%,14/1554)\r\n\r\nOK"
+    },
+    "new_hits": 9
+  },
+  {
+    "id": "cfg_set_ch0_clk1",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 18,
+      "branch_percent": 21,
+      "hit_stubs": 13,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(18%,21%,13/66) ALL(0%,0%,14/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 18,
+      "branch_percent": 21,
+      "hit_stubs": 13,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(18%,21%,13/66) ALL(0%,0%,14/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "cfg_set_ch1_clk0",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 18,
+      "branch_percent": 21,
+      "hit_stubs": 13,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(18%,21%,13/66) ALL(0%,0%,14/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 18,
+      "branch_percent": 21,
+      "hit_stubs": 13,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(18%,21%,13/66) ALL(0%,0%,14/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "cfg_set_ch1_clk1",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 18,
+      "branch_percent": 21,
+      "hit_stubs": 13,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(18%,21%,13/66) ALL(0%,0%,14/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 18,
+      "branch_percent": 21,
+      "hit_stubs": 13,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(18%,21%,13/66) ALL(0%,0%,14/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "cfg_set_ch0_default",
+    "response": "+MPWMCNF: 0,1\r\n\r\nOK",
+    "before_summary": {
+      "stmt_percent": 18,
+      "branch_percent": 21,
+      "hit_stubs": 13,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(18%,21%,13/66) ALL(0%,0%,14/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 20,
+      "branch_percent": 21,
+      "hit_stubs": 14,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(20%,21%,14/66) ALL(0%,0%,15/1554)\r\n\r\nOK"
+    },
+    "new_hits": 1
+  },
+  {
+    "id": "cfg_set_ch1_default",
+    "response": "+MPWMCNF: 1,1\r\n\r\nOK",
+    "before_summary": {
+      "stmt_percent": 20,
+      "branch_percent": 21,
+      "hit_stubs": 14,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(20%,21%,14/66) ALL(0%,0%,15/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 20,
+      "branch_percent": 21,
+      "hit_stubs": 14,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(20%,21%,14/66) ALL(0%,0%,15/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "data_test",
+    "response": "+MPWMCTRL: (0-1),(0-1)\r\n\r\nOK",
+    "before_summary": {
+      "stmt_percent": 20,
+      "branch_percent": 21,
+      "hit_stubs": 14,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(20%,21%,14/66) ALL(0%,0%,15/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 25,
+      "branch_percent": 30,
+      "hit_stubs": 18,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(25%,30%,18/66) ALL(0%,0%,19/1554)\r\n\r\nOK"
+    },
+    "new_hits": 4
+  },
+  {
+    "id": "data_get",
+    "response": "+MPWMDATA: 0,0,0\r\n+MPWMDATA: 1,0,0\r\n\r\nOK",
+    "before_summary": {
+      "stmt_percent": 25,
+      "branch_percent": 30,
+      "hit_stubs": 18,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(25%,30%,18/66) ALL(0%,0%,19/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 32,
+      "branch_percent": 34,
+      "hit_stubs": 22,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(32%,34%,22/66) ALL(0%,0%,23/1554)\r\n\r\nOK"
+    },
+    "new_hits": 4
+  },
+  {
+    "id": "data_set_ch0_100_50",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 32,
+      "branch_percent": 34,
+      "hit_stubs": 22,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(32%,34%,22/66) ALL(0%,0%,23/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 46,
+      "branch_percent": 52,
+      "hit_stubs": 32,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(46%,52%,32/66) ALL(1%,0%,33/1554)\r\n\r\nOK"
+    },
+    "new_hits": 10
+  },
+  {
+    "id": "data_set_ch0_1000_30",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 46,
+      "branch_percent": 52,
+      "hit_stubs": 32,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(46%,52%,32/66) ALL(1%,0%,33/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 46,
+      "branch_percent": 52,
+      "hit_stubs": 32,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(46%,52%,32/66) ALL(1%,0%,33/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "data_set_ch1_200_70",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 46,
+      "branch_percent": 52,
+      "hit_stubs": 32,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(46%,52%,32/66) ALL(1%,0%,33/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 46,
+      "branch_percent": 52,
+      "hit_stubs": 32,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(46%,52%,32/66) ALL(1%,0%,33/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "data_set_ch1_5000_10",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 46,
+      "branch_percent": 52,
+      "hit_stubs": 32,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(46%,52%,32/66) ALL(1%,0%,33/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 46,
+      "branch_percent": 52,
+      "hit_stubs": 32,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(46%,52%,32/66) ALL(1%,0%,33/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "data_get_ch0",
+    "response": "+MPWMDATA: 0,1000,30\r\n\r\nOK",
+    "before_summary": {
+      "stmt_percent": 46,
+      "branch_percent": 52,
+      "hit_stubs": 32,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(46%,52%,32/66) ALL(1%,0%,33/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 48,
+      "branch_percent": 52,
+      "hit_stubs": 33,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(48%,52%,33/66) ALL(1%,0%,34/1554)\r\n\r\nOK"
+    },
+    "new_hits": 1
+  },
+  {
+    "id": "data_get_ch1",
+    "response": "+MPWMDATA: 1,5000,10\r\n\r\nOK",
+    "before_summary": {
+      "stmt_percent": 48,
+      "branch_percent": 52,
+      "hit_stubs": 33,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(48%,52%,33/66) ALL(1%,0%,34/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 48,
+      "branch_percent": 52,
+      "hit_stubs": 33,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(48%,52%,33/66) ALL(1%,0%,34/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "ctrl_test",
+    "response": "+MPWMCTRL: (0-1),(0-1)\r\n\r\nOK",
+    "before_summary": {
+      "stmt_percent": 48,
+      "branch_percent": 52,
+      "hit_stubs": 33,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(48%,52%,33/66) ALL(1%,0%,34/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 48,
+      "branch_percent": 52,
+      "hit_stubs": 33,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(48%,52%,33/66) ALL(1%,0%,34/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "ctrl_get",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 48,
+      "branch_percent": 52,
+      "hit_stubs": 33,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(48%,52%,33/66) ALL(1%,0%,34/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 48,
+      "branch_percent": 56,
+      "hit_stubs": 34,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(48%,56%,34/66) ALL(1%,0%,35/1554)\r\n\r\nOK"
+    },
+    "new_hits": 1
+  },
+  {
+    "id": "ctrl_enable_ch0",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 48,
+      "branch_percent": 56,
+      "hit_stubs": 34,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(48%,56%,34/66) ALL(1%,0%,35/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "new_hits": 7
+  },
+  {
+    "id": "ctrl_disable_ch0",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "ctrl_enable_ch1",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "ctrl_disable_ch1",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "data_period_min",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "data_period_max",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "data_duty_min",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "data_duty_max",
+    "response": "OK",
+    "before_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "cfg_invalid_channel",
+    "response": "+CME ERROR: 50",
+    "before_summary": {
+      "stmt_percent": 51,
+      "branch_percent": 82,
+      "hit_stubs": 41,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(51%,82%,41/66) ALL(1%,1%,42/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 53,
+      "branch_percent": 82,
+      "hit_stubs": 42,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(53%,82%,42/66) ALL(1%,1%,43/1554)\r\n\r\nOK"
+    },
+    "new_hits": 1
+  },
+  {
+    "id": "cfg_invalid_clk",
+    "response": "+CME ERROR: 50",
+    "before_summary": {
+      "stmt_percent": 53,
+      "branch_percent": 82,
+      "hit_stubs": 42,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(53%,82%,42/66) ALL(1%,1%,43/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 55,
+      "branch_percent": 82,
+      "hit_stubs": 43,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(55%,82%,43/66) ALL(1%,1%,44/1554)\r\n\r\nOK"
+    },
+    "new_hits": 1
+  },
+  {
+    "id": "data_invalid_channel",
+    "response": "+CME ERROR: 50",
+    "before_summary": {
+      "stmt_percent": 55,
+      "branch_percent": 82,
+      "hit_stubs": 43,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(55%,82%,43/66) ALL(1%,1%,44/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 58,
+      "branch_percent": 82,
+      "hit_stubs": 44,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(58%,82%,44/66) ALL(1%,1%,45/1554)\r\n\r\nOK"
+    },
+    "new_hits": 1
+  },
+  {
+    "id": "data_invalid_period_0",
+    "response": "+CME ERROR: 50",
+    "before_summary": {
+      "stmt_percent": 58,
+      "branch_percent": 82,
+      "hit_stubs": 44,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(58%,82%,44/66) ALL(1%,1%,45/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 60,
+      "branch_percent": 82,
+      "hit_stubs": 45,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(60%,82%,45/66) ALL(1%,1%,46/1554)\r\n\r\nOK"
+    },
+    "new_hits": 1
+  },
+  {
+    "id": "data_invalid_period_10001",
+    "response": "+CME ERROR: 50",
+    "before_summary": {
+      "stmt_percent": 60,
+      "branch_percent": 82,
+      "hit_stubs": 45,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(60%,82%,45/66) ALL(1%,1%,46/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 60,
+      "branch_percent": 82,
+      "hit_stubs": 45,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(60%,82%,45/66) ALL(1%,1%,46/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "data_invalid_duty_101",
+    "response": "+CME ERROR: 50",
+    "before_summary": {
+      "stmt_percent": 60,
+      "branch_percent": 82,
+      "hit_stubs": 45,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(60%,82%,45/66) ALL(1%,1%,46/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 62,
+      "branch_percent": 82,
+      "hit_stubs": 46,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(62%,82%,46/66) ALL(1%,1%,47/1554)\r\n\r\nOK"
+    },
+    "new_hits": 1
+  },
+  {
+    "id": "ctrl_invalid_channel",
+    "response": "+CME ERROR: 50",
+    "before_summary": {
+      "stmt_percent": 62,
+      "branch_percent": 82,
+      "hit_stubs": 46,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(62%,82%,46/66) ALL(1%,1%,47/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 62,
+      "branch_percent": 82,
+      "hit_stubs": 46,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(62%,82%,46/66) ALL(1%,1%,47/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  },
+  {
+    "id": "ctrl_invalid_onoff",
+    "response": "+CME ERROR: 50",
+    "before_summary": {
+      "stmt_percent": 62,
+      "branch_percent": 82,
+      "hit_stubs": 46,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(62%,82%,46/66) ALL(1%,1%,47/1554)\r\n\r\nOK"
+    },
+    "after_summary": {
+      "stmt_percent": 62,
+      "branch_percent": 82,
+      "hit_stubs": 46,
+      "total_stubs": 66,
+      "raw": "+COVERAGE: EXT(25%,0%,1/4) MQTT(0%,0%,0/635) HTTP(0%,0%,0/810) HTTPAPI(0%,0%,0/360) TCP(0%,0%,0/462) PING(0%,0%,0/27) PWM(62%,82%,46/66) ALL(1%,1%,47/1554)\r\n\r\nOK"
+    },
+    "new_hits": 0
+  }
+]
