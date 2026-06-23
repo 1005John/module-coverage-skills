@@ -193,6 +193,88 @@ def rebuild_coverage_map(source_path, module_name):
 2. 宏展开可能有变体
 3. 多行函数调用中的桩可能被跳过
 
+## 新模块插桩完整清单（关键！）
+
+每次新模块插桩时，必须同时修改两个文件，否则 `AT+COVERAGE?` 不会显示新模块：
+
+### 文件 1: 模块源码 (如 cm_atcmd_ping.c)
+
+1. 添加独立计数器和 bitmap：
+```c
+#ifdef CM_COVERAGE_ENABLE
+volatile unsigned int cov_xxx_stmt_hits = 0;
+volatile unsigned int cov_xxx_branch_hits = 0;
+#define COV_XXX_TOTAL 50
+#define COV_XXX_BRANCH_START 30
+static unsigned int cov_xxx_bitmap[(COV_XXX_TOTAL + 31) / 32] = {0};
+
+static void cm_cov_xxx_hit(unsigned short id) {
+    if (id >= COV_XXX_TOTAL) return;
+    unsigned int w = id / 32;
+    unsigned int b = id % 32;
+    if (!(cov_xxx_bitmap[w] & (1u << b))) {
+        cov_xxx_bitmap[w] |= (1u << b);
+        if (id < COV_XXX_BRANCH_START) cov_xxx_stmt_hits++;
+        else cov_xxx_branch_hits++;
+    }
+}
+#define COV_STMT(id) cm_cov_xxx_hit(id)
+#define COV_BRANCH_T(id) cm_cov_xxx_hit(id)
+#define COV_BRANCH_F(id) cm_cov_xxx_hit(id)
+#else
+#define COV_STMT(id) ((void)0)
+#define COV_BRANCH_T(id) ((void)0)
+#define COV_BRANCH_F(id) ((void)0)
+#endif
+```
+
+2. 在函数入口、if/else 体、关键执行行插入 COV_STMT/COV_BRANCH_T/COV_BRANCH_F
+
+### 文件 2: cm_atcmd_extern.c（必须！）
+
+在 `#ifdef CM_COVERAGE_ENABLE` 块中添加：
+
+1. **extern 声明**（在其他模块声明之后）：
+```c
+extern volatile unsigned int cov_xxx_stmt_hits;
+extern volatile unsigned int cov_xxx_branch_hits;
+```
+
+2. **变量声明**（在 AT+COVERAGE? 的 GET_CMD case 中）：
+```c
+unsigned long _xxx_stmt = cov_xxx_stmt_hits;
+unsigned long _xxx_branch = cov_xxx_branch_hits;
+unsigned long _xxx_total = STMT_COUNT + BRANCH_COUNT;
+_all_stmt += _xxx_stmt;
+_all_branch += _xxx_branch;
+_all_total += _xxx_total;
+```
+
+3. **sprintf 输出**（修改 AT+COVERAGE? 的格式字符串）：
+```c
+sprintf(output, "+COVERAGE: EXT(...) MQTT(...) ... XXX(%lu%%,%lu%%,%lu/%lu) ALL(...)",
+    (unsigned long)(_xxx_total > 0 ? (_xxx_stmt * 100) / STMT_COUNT : 0),
+    (unsigned long)(_xxx_total > 0 ? (_xxx_branch * 100) / BRANCH_COUNT : 0),
+    _xxx_stmt + _xxx_branch, _xxx_total,
+    ...);
+```
+
+### 验证清单
+
+- [ ] 模块源码有独立计数器和 bitmap
+- [ ] cm_atcmd_extern.c 有 extern 声明
+- [ ] cm_atcmd_extern.c 的 GET_CMD 有变量声明
+- [ ] cm_atcmd_extern.c 的 sprintf 有新模块输出
+- [ ] 编译后 AT+COVERAGE? 显示新模块
+- [ ] 执行几条 AT 命令后新模块桩数 > 0
+
+### 常见 Pitfall
+
+1. **只改模块源码，不改 cm_atcmd_extern.c** → AT+COVERAGE? 不显示新模块
+2. **extern 声明在 #ifdef 块外** → 编译通过但链接失败
+3. **sprintf 格式字符串和参数数量不匹配** → 编译报错或输出乱码
+4. **忘记清理 .o 和 pack_c.via** → 增量编译不重编，修改不生效
+
 ## 多层模块插桩架构
 
 当模块有 AT 层 + 底层实现层时，需要两套独立插桩：
@@ -242,6 +324,56 @@ static void cm_cov_xxx_hit(uint16_t stub_id) {
 | AT 层 | cm_atcmd_tcpip.c | 300 (500-799) | 162 (2500-2661) | 462 |
 
 cm_atcmd_extern.c 新增 `TCP(%lu%%,%lu%%,%lu/%lu)` 格式，output buffer 扩大到 384 字节。
+
+## 新模块必须更新 cm_atcmd_extern.c（关键 Pitfall）
+
+插桩新模块后，`AT+COVERAGE?` 默认不会显示该模块。必须修改 `cm_atcmd_extern.c` 添加三处：
+
+### 1. extern 声明（文件头部，约 40-55 行）
+
+```c
+extern volatile unsigned int cov_newmod_stmt_hits;
+extern volatile unsigned int cov_newmod_branch_hits;
+```
+
+### 2. GET_CMD handler 中添加变量和总计
+
+在 `case TEL_EXT_GET_CMD:` 中，找到 `_tcp_total` 定义附近，添加：
+
+```c
+unsigned long _newmod_stmt = cov_newmod_stmt_hits;
+unsigned long _newmod_branch = cov_newmod_branch_hits;
+unsigned long _newmod_total = STMT_COUNT + BRANCH_COUNT;
+_all_stmt += ... + _newmod_stmt;
+_all_branch += ... + _newmod_branch;
+_all_total += ... + _newmod_total;
+```
+
+### 3. 修改 sprintf 格式字符串
+
+在 `+COVERAGE:` 格式中添加 `NEWMOD(%lu%%,%lu%%,%lu/%lu)`，并在参数列表中添加对应的 3 个计算值。
+
+### 编码注意事项
+
+`cm_atcmd_extern.c` 在 Windows 上可能是 GBK 或 latin-1 编码。Python 修改脚本必须用 `encoding='latin-1'`，不能用 `utf-8` 或 `gbk`（会因特殊字节失败）。
+
+```python
+with open(path, 'r', encoding='latin-1') as f:
+    content = f.read()
+# ... 修改 ...
+with open(path, 'w', encoding='latin-1') as f:
+    f.write(content)
+```
+
+### 验证方法
+
+修改后烧录，执行：
+```
+AT+COVERAGE=1    # 清零
+AT+COVERAGE?     # 应显示 NEWMOD(0%,0%,0/N)
+```
+
+如果返回中没有新模块名，说明 extern 声明或 sprintf 未正确修改。
 
 ## 自动插桩脚本陷阱 (armcc 特有)
 
