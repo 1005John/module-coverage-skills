@@ -1,4 +1,4 @@
-# ML307R 覆盖率测试完整流程
+# 模组覆盖率测试完整流程
 
 ## 流程概览
 
@@ -63,7 +63,7 @@ commands:
 **技能**: `coverage-instrumentation`
 
 **输入**:
-- 源文件：`D:\ML307R\SDK\onemo\at\src\cm_atcmd_mqtt.c`
+- 源文件：`D:\通信模组\SDK\onemo\at\src\cm_atcmd_mqtt.c`
 - 桩 ID 范围：MQTT 100-500 (stmt) / 1100-1332 (branch)
 
 **输出**:
@@ -104,29 +104,29 @@ python3 rebuild_coverage_map.py
 
 **输入**:
 - 插桩后的源文件
-- SDK 路径：`D:\ML307R\SDK`
+- SDK 路径：`D:\通信模组\SDK`
 
 **输出**:
-- `ML307R-DC-MBRH0S01_*_release.zip` — 固件包
+- `通信模组-DC-MBRH0S01_*_release.zip` — 固件包
 
 **处理内容**:
 1. 清理缓存（`.o`、`.d`、`.pp`、`pack_c.via`）
-2. 增量编译：`ML307R.bat DC`（禁止 DC ALL）
+2. 增量编译：`通信模组.bat DC`（禁止 DC ALL）
 3. 验证编译产物（`.o` > 0 字节、`.axf` 存在）
 
 **关键命令**:
 ```bash
 # 清理缓存
-ssh 52467@172.20.162.21 "del /q D:\\ML307R\\SDK\\tavor\\Arbel\\obj_PMD2NONE\\obj_onemo_onemo\\obj_onemo_at\\cm_atcmd_mqtt.*"
-ssh 52467@172.20.162.21 "del /q D:\\ML307R\\SDK\\tavor\\Arbel\\obj_PMD2NONE\\obj_onemo_onemo\\obj_onemo_at\\pack_c.via"
+ssh user@host "del /q D:\\通信模组\\SDK\\tavor\\Arbel\\obj_PMD2NONE\\obj_onemo_onemo\\obj_onemo_at\\cm_atcmd_mqtt.*"
+ssh user@host "del /q D:\\通信模组\\SDK\\tavor\\Arbel\\obj_PMD2NONE\\obj_onemo_onemo\\obj_onemo_at\\pack_c.via"
 
 # 增量编译
-ssh 52467@172.20.162.21 "cd /d D:\\ML307R\\SDK && cmd /c ML307R.bat DC"
+ssh user@host "cd /d D:\\通信模组\\SDK && cmd /c 通信模组.bat DC"
 ```
 
 **期望输出**:
 ```
-ML307R-DC-MBRH0S01_3.1.0.XXXXXXXX_release.zip
+通信模组-DC-MBRH0S01_3.1.0.XXXXXXXX_release.zip
 ```
 
 ---
@@ -136,7 +136,7 @@ ML307R-DC-MBRH0S01_3.1.0.XXXXXXXX_release.zip
 **技能**: `coverage-build-flash`
 
 **输入**:
-- 固件包：`ML307R-DC-MBRH0S01_*_release.zip`
+- 固件包：`通信模组-DC-MBRH0S01_*_release.zip`
 
 **输出**:
 - 模组运行新固件
@@ -151,13 +151,13 @@ ML307R-DC-MBRH0S01_3.1.0.XXXXXXXX_release.zip
 **关键命令**:
 ```bash
 # 发送 AT+MFORCEDL
-ssh 52467@172.20.162.21 "python -c \"import serial; s=serial.Serial('COM16',115200); s.write(b'AT+MFORCEDL\\r\\n'); import time; time.sleep(2); s.close()\""
+ssh user@host "python -c \"import serial; s=serial.Serial('SERIAL_PORT',115200); s.write(b'AT+MFORCEDL\\r\\n'); import time; time.sleep(2); s.close()\""
 
 # 烧录
-ssh 52467@172.20.162.21 "D:\\software\\aboot-tools-...\\adownload.exe -q -a -u -s 115200 -r D:\\ML307R\\SDK\\target\\ML307R-DC-MBRH0S01\\ML307R-DC-MBRH0S01_*_release.zip"
+ssh user@host "D:\\software\\aboot-tools-...\\adownload.exe -q -a -u -s 115200 -r D:\\通信模组\\SDK\\target\\通信模组-DC-MBRH0S01\\通信模组-DC-MBRH0S01_*_release.zip"
 
 # 验证
-ssh 52467@172.20.162.21 "python -c \"import serial; s=serial.Serial('COM16',115200); s.write(b'AT\\r\\n'); import time; time.sleep(1); print(s.read_all()); s.close()\""
+ssh user@host "python -c \"import serial; s=serial.Serial('SERIAL_PORT',115200); s.write(b'AT\\r\\n'); import time; time.sleep(1); print(s.read_all()); s.close()\""
 ```
 
 **期望输出**:
@@ -317,13 +317,13 @@ ls /Volumes/DevDrive/test_report_ref/HTTP_HTTPS用户手册*.pdf
 
 ```bash
 # 1. 获取源文件
-scp 52467@172.20.162.21:D:/ML307R/SDK/onemo/at/src/cm_atcmd_http.c /tmp/
+scp user@host:D:/通信模组/SDK/onemo/at/src/cm_atcmd_http.c /tmp/
 
 # 2. 运行插桩脚本
 python3 instrument_http_v2.py /tmp/cm_atcmd_http.c /tmp/cm_atcmd_http_instrumented.c
 
 # 3. 上传插桩后的文件
-scp /tmp/cm_atcmd_http_instrumented.c 52467@172.20.162.21:D:/ML307R/SDK/onemo/at/src/cm_atcmd_http.c
+scp /tmp/cm_atcmd_http_instrumented.c user@host:D:/通信模组/SDK/onemo/at/src/cm_atcmd_http.c
 
 # 4. 生成 coverage_map
 python3 rebuild_coverage_map.py --module HTTP --source cm_atcmd_http.c
@@ -334,24 +334,24 @@ python3 rebuild_coverage_map.py --module HTTP --source cm_atcmd_http.c
 
 ```bash
 # 清理缓存
-ssh 52467@172.20.162.21 "del /q D:\\ML307R\\SDK\\tavor\\Arbel\\obj_PMD2NONE\\obj_onemo_onemo\\obj_onemo_at\\cm_atcmd_http.*"
-ssh 52467@172.20.162.21 "del /q D:\\ML307R\\SDK\\tavor\\Arbel\\obj_PMD2NONE\\obj_onemo_onemo\\obj_onemo_at\\pack_c.via"
+ssh user@host "del /q D:\\通信模组\\SDK\\tavor\\Arbel\\obj_PMD2NONE\\obj_onemo_onemo\\obj_onemo_at\\cm_atcmd_http.*"
+ssh user@host "del /q D:\\通信模组\\SDK\\tavor\\Arbel\\obj_PMD2NONE\\obj_onemo_onemo\\obj_onemo_at\\pack_c.via"
 
 # 增量编译
-ssh 52467@172.20.162.21 "cd /d D:\\ML307R\\SDK && cmd /c ML307R.bat DC"
+ssh user@host "cd /d D:\\通信模组\\SDK && cmd /c 通信模组.bat DC"
 ```
 
 #### 步骤 4: 烧录
 
 ```bash
 # 发送 AT+MFORCEDL
-ssh 52467@172.20.162.21 "python -c \"import serial; s=serial.Serial('COM16',115200); s.write(b'AT+MFORCEDL\\r\\n'); import time; time.sleep(2); s.close()\""
+ssh user@host "python -c \"import serial; s=serial.Serial('SERIAL_PORT',115200); s.write(b'AT+MFORCEDL\\r\\n'); import time; time.sleep(2); s.close()\""
 
 # 烧录
-ssh 52467@172.20.162.21 "adownload.exe -q -a -u -s 115200 -r <firmware.zip>"
+ssh user@host "adownload.exe -q -a -u -s 115200 -r <firmware.zip>"
 
 # 验证
-ssh 52467@172.20.162.21 "python -c \"import serial; s=serial.Serial('COM16',115200); s.write(b'AT\\r\\n'); import time; time.sleep(1); print(s.read_all()); s.close()\""
+ssh user@host "python -c \"import serial; s=serial.Serial('SERIAL_PORT',115200); s.write(b'AT\\r\\n'); import time; time.sleep(1); print(s.read_all()); s.close()\""
 ```
 
 #### 步骤 5: 测试执行
@@ -362,17 +362,17 @@ python3 generate_tests.py module_model.http.yaml generated_tests.http.yaml
 
 # 执行测试
 python3 run_http_bitmap_v1.py
-# 输出: D:\ML307R\at_kb_runs\http-v1-bitmap\
+# 输出: D:\通信模组\at_kb_runs\http-v1-bitmap\
 ```
 
 #### 步骤 6: 分析迭代
 
 ```bash
 # 分析结果
-python3 analyze_coverage.py D:\ML307R\at_kb_runs\http-v1-bitmap\
+python3 analyze_coverage.py D:\通信模组\at_kb_runs\http-v1-bitmap\
 
 # 生成下一轮用例
-python3 generate_next_round.py D:\ML307R\at_kb_runs\http-v1-bitmap\coverage_delta.json
+python3 generate_next_round.py D:\通信模组\at_kb_runs\http-v1-bitmap\coverage_delta.json
 
 # 执行下一轮
 python3 run_http_bitmap_v2.py
@@ -382,7 +382,7 @@ python3 run_http_bitmap_v2.py
 
 ```bash
 # 生成报告
-python3 generate_report.py D:\ML307R\at_kb_runs\http-v*-bitmap\
+python3 generate_report.py D:\通信模组\at_kb_runs\http-v*-bitmap\
 # 输出: http_coverage_report.md + http_coverage_report.xlsx
 ```
 
@@ -419,7 +419,7 @@ python3 generate_report.py D:\ML307R\at_kb_runs\http-v*-bitmap\
 │   └── mqtt_coverage_runbook.md      # 可复制的 runbook
 └── env.yaml                       # 环境配置
 
-D:\ML307R\at_kb_runs\
+D:\通信模组\at_kb_runs\
 ├── coverage_map.mqtt.json         # MQTT 桩映射
 ├── coverage_map.http.json         # HTTP 桩映射
 ├── mqtt-v9-bitmap\                # MQTT 测试结果
