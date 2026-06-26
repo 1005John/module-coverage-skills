@@ -18,11 +18,17 @@ triggers:
 # AT 手册知识库建模技能
 
 ## When to Use
-
+## When to Use
 - 用户提供蜂窝通信模组的软件 AT 手册、扩展手册、用户手册、开发指导手册，需要抽取指令、响应、URC、流程和状态依赖。
 - 用户要为 MQTT、HTTP/HTTPS、FTP、TCP/IP、SSL、GNSS、SMS 等功能生成 `module_model.<module>.yaml` 或 `manual_expectations.<module>.json`。
 - 用户要基于手册变更、代码变更或覆盖率未命中分支生成新的 AT 测试用例。
 - 用户强调测试用例必须依据 AT 手册校验预期响应，而不是只追求覆盖率。
+
+## 部署位置
+
+**测试电脑** (172.20.162.21) — 因为 module_model.yaml 直接在测试电脑上被用例生成器消费。
+
+前置依赖：`pip install pymupdf`（PDF 文本抽取）。如果测试电脑无法安装，可将手册 PDF 拷贝到编译服务器执行，再将结果传回测试电脑。
 
 ## 核心原则
 
@@ -529,8 +535,9 @@ PDF手册 → [步骤1-4] → module_model.yaml → [步骤7] → generated_test
 ## 已有样例和工具
 
 ```text
-# 规划文档
-/Volumes/DevDrive/test_report_ref/at_knowledge_base_plan.md
+# 模块模型样例
+references/ping-module-model.md    — Ping 模块（简单，快速验证）
+references/pwm-module-model.md     — PWM 模块（3 个命令，硬件相关）
 
 # MQTT 模型样例
 /Volumes/DevDrive/test_report_ref/mqtt_module_model.example.yaml

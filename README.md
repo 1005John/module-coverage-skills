@@ -205,6 +205,13 @@ def pub_dm(ser, cmd, payload, timeout=8):
 
 - [完整流程文档](reports/coverage_test_full_workflow.md)
 
+## 部署架构
+
+本技能集运行在两台机器上，详见 [DEPLOYMENT.md](DEPLOYMENT.md)：
+
+- **编译服务器** (192.168.242.120): 插桩 + 编译
+- **测试电脑** (172.20.162.21): 建模 + 烧录 + 测试 + 分析 + 报告
+
 ## License
 
 MIT

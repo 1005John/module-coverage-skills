@@ -15,6 +15,14 @@ triggers:
 - 用户要求"自动跑覆盖率"或"插桩+测试"某个模块
 - 目标模块有明确的 AT 命令（MQTT/HTTP/TCP 等）
 
+## 部署架构
+
+**详见 DEPLOYMENT.md** — 双机分工架构文档。
+
+编译服务器 (192.168.242.120): 阶段 1-2 (变更识别+插桩) + 阶段 5a (编译)
+测试电脑 (172.20.162.21):     阶段 3-4 (建模+用例) + 阶段 5c (烧录) + 阶段 6-8 (测试+分析+报告)
+中间跳板 (Mac):               阶段 5b (固件传输)
+
 ## 前置必读
 加载本技能后，必须依次读取以下文件：
 - references/end-to-end-module-coverage-workflow.md — 新模块端到端覆盖率测试实战流程（插桩→编译→烧录→测试→缺陷→报告）
@@ -23,8 +31,15 @@ triggers:
 - references/mqtt-testing-lessons.md — 12 轮迭代经验
 - references/tcp-coverage-iteration-lessons.md — TCP 模块迭代经验（crash bug、数据模式、单连接策略）
 - references/config-templates.md — env.yaml 和 module_config 模板
+- references/ping-module-walkthrough.md — Ping 模块完整 walkthrough（新模块最佳参考）
 - coverage-analysis/references/automatic-test-generation.md — 完全自动测试用例生成与迭代设计
 - references/at-manual-knowledge-base.md — AT 手册结构化知识库建模方法（命令/参数/响应/URC/状态机/流程/测试生成）
+- references/incremental-instrumentation-design.md — Level 2 增量插桩设计方案（git diff 函数级，轮询检测，仓库架构）
+- references/repo-polling-architecture.md — 仓库轮询架构（cron 模型、脚本路径、飞书推送）
+- references/centralized-server-test-computer-architecture.md — 多工程师分层架构：中心服务器负责插桩/编译/artifact，测试电脑负责 AT 执行/迭代/经验/报告
+- references/windows-server-deployment-state.md — Windows 服务器 192.168.242.120 实际部署状态（目录结构、已部署脚本、credentials、完成清单）
+- references/test-machine-flash-workflow.md — 测试机 172.20.162.21 烧录与验证流程
+- references/test-pc-workspace-scripts.md — 测试电脑完整工作区脚本（probe/flash/run/analyze/report 5 个脚本的接口和部署步骤）
 
 ## 阶段流程
 
@@ -42,6 +57,7 @@ triggers:
 - 在测试工作区生成插桩源码
 - 输出 `coverage_map.json`，必须包含 stub_id、文件、行号、函数、分支条件、附近源码、命令/参数提示
 - 若当前固件只能返回 hit/total，需评估增加 bitmap/命中 ID 查询能力，否则只能做粗粒度迭代
+- **增量模式**：当有旧版本 coverage_map.json 且变更为小版本提交时，可用 git diff 增量分析（见 coverage-instrumentation/references/git-diff-incremental-instrumentation.md），只对受影响函数重插桩，其余平移行号
 
 ### 阶段 3：模块模型
 - 从 AT 手册、源码解析和历史测试经验生成 `module_model.yaml`
@@ -89,6 +105,8 @@ triggers:
 6. **自动模式必须数据驱动**：执行器消费 `generated_tests.yaml`，不得把每轮新增用例继续写死在 vN 脚本中
 7. **桩级明细优先**：没有命中 ID/bitmap 时必须标记 coarse_delta_only，不能假装知道具体命中桩
 8. **行为断言优先级不低于覆盖率**：新增覆盖但预期不符时必须报潜在 bug，不能算测试通过
+9. **持续推进，不要频繁停下汇报**：用户要求"跑完整轮次/持续迭代"时，必须持续完成：执行当前用例集 → 落盘结果 → 分析覆盖率和失败项 → 生成下一轮增量用例或脚本 → 执行增量轮 → 输出闭环报告。只有明确硬阻塞（需要物理操作、需要设计决策、需要用户输入）时才停下来。不要每完成一个子步骤就停下问"接下来做什么"或汇报"完成了"。
+10. **Windows 后台执行不可靠**：`Start-Process` / `start /b` 通过 SSH 执行时经常静默失败（创建空 stdout/stderr 后立即退出）。启动后必须检查 `tasklist`、日志增长、结果目录是否创建。若后台方式假跑，改用前台 SSH 长超时执行（`timeout=600`）。
 
 ## 验收标准
 
@@ -99,7 +117,7 @@ triggers:
 | 输出格式 | JSON + MD + Excel |
 | 可复制性 | 另一个 Agent 按报告可独立继续 |
 
-## 桩 ID 分配表（截至 2026-06-22）
+## 桩 ID 分配表（截至 2026-06-23）
 
 | 模块 | 语句桩 ID | 分支桩 ID | 已用桩数 |
 |------|-----------|-----------|----------|
@@ -107,9 +125,24 @@ triggers:
 | MQTT (cm_atcmd_mqtt.c) | 100-500 | 1100-1332 | 635 |
 | HTTP (cm_atcmd_http.c) | 200-437 | 2000-2211 | 450 |
 | TCP (cm_atcmd_tcpip.c) | 500-799 | 2500-2661 | 462 |
+| PING (cm_atcmd_ping.c) | 0-11 | 30-44 | 27 |
+| PWM (cm_atcmd_pwm.c) | 0-29 | 30-52 | 53 |
+| DNS (cm_atcmd_dns.c) | 0-98 | 100-148 | 148 |
 | 新模块 | 按需分配 | 避免重叠 | - |
 
 注意：HTTP API 层 (cm_http_api.c) 有独立计数器，360 桩，不在上述 ID 范围内。
+
+## 新模块覆盖率报告集成（关键步骤）
+
+插桩新模块后，`AT+COVERAGE?` 默认不显示该模块。必须修改 `cm_atcmd_extern.c`：
+
+1. **extern 声明**：添加模块的 `cov_xxx_stmt_hits` / `cov_xxx_branch_hits` 声明
+2. **GET_CMD 变量**：在 handler 中添加模块变量、更新 `_all_stmt` / `_all_branch` / `_all_total`
+3. **sprintf 格式**：添加 `XXX(%lu%%,%lu%%,%lu/%lu)` 和对应参数
+
+**编码**：`cm_atcmd_extern.c` 用 `latin-1` 编码读写，不要用 `utf-8` 或 `gbk`。
+
+**验证**：烧录后 `AT+COVERAGE=1` + `AT+COVERAGE?` 应显示 `NEWMOD(0%,0%,0/N)`。
 
 ## 编译与打包的分离（关键 Pitfall）
 
@@ -140,6 +173,62 @@ triggers:
 **影响**：TCP 覆盖率测试不能在同一会话中测试多种 access_mode。每种 mode 需要重启模组后独立测试。
 **其他模块（MQTT/HTTP）的 close 命令需验证是否存在同样问题。**
 
+## 测试电脑（远程）工作流
+
+测试电脑通过 SSH 从 Mac 中转获取服务器产物。三机架构：
+
+```
+服务器 (192.168.242.120)  →  Mac (orchestrator)  →  测试机 (172.20.162.21)
+   插桩+编译                   SSH 编排                 烧录+AT测试
+```
+
+### 测试机环境（172.20.162.21, 用户 52467）
+
+- Python 3.11.6 + pyserial 3.5
+- 烧录工具：`D:\software\aboot-tools-2023.04.03\...\adownload.exe`
+- AT 串口：COM16 (115200)
+- 下载口：COM15 (ASR Serial Download Device)
+- 工作目录：`D:\module_coverage_test\`
+- 历史测试：`D:\ML307R\autocov\runs\`
+
+### 产物传输流程
+
+```bash
+# 1. 服务器 → Mac
+sshpass -p '123' scp Lenovo@192.168.242.120:'output/FINAL/*.zip' /tmp/artifacts/
+sshpass -p '123' scp Lenovo@192.168.242.120:'output/PWM_FR004_final/coverage_map.*.json' /tmp/artifacts/
+
+# 2. Mac → 测试机
+scp /tmp/artifacts/* 52467@172.20.162.21:D:/module_coverage_test/
+```
+
+### 烧录流程
+
+1. AT+MFORCEDL 进入下载模式
+2. 等待 COM15 出现 ASR Serial Download Device
+3. adownload.exe -q -a -u -s 115200 -r <firmware.zip>
+4. 等待模块重启（~10s）
+5. AT 验证 + AT+MSWVER 确认版本
+
+参考脚本：测试机上 `C:\Users\52467\flash_coverage_detail.py`
+
+## ⚠️ 关键 Pitfall: 编译前必须先运行 update_extern.py
+
+**实战教训**：服务器编译了固件但没有先运行 update_extern.py 更新 cm_atcmd_extern.c，导致烧录后 AT+COVERAGE? 返回 ERROR。
+
+**正确顺序**（不可打乱）：
+```
+1. instrument.py     → 生成插桩源码（含 cm_cov_xxx_hit）
+2. update_extern.py  → 更新 cm_atcmd_extern.c（添加模块汇总入口）
+3. 编译              → 生成固件 ZIP
+4. 打包              → 生成 manifest + 产物目录
+```
+
+**验证方法**：编译前检查 cm_atcmd_extern.c 是否包含新模块的 extern 声明：
+```bash
+grep "cov_pwm_stmt_hits" cm_atcmd_extern.c  # 应有匹配
+```
+
 ## 常见 Pitfalls
 
 1. **DC ALL 会覆盖插桩文件** — 永远用 DC（增量），手动删 .o 触发重编
@@ -150,13 +239,14 @@ triggers:
 6. **单行 if/else 无花括号** — 插桩脚本不能在 body 前插 COV_STMT
 7. **CM_RETURN/break 后的 COV_STMT** — 编译器报 unreachable error
 8. **ReliableData.bin 缺失** — DC ALL 后 bin 目录被清空，需从 SDK 根目录复制或重跑 DC 自愈
-9. **TCP MIPCLOSE 所有模式在数据交换后 crash** — mode=0/1/2 均导致模组重启。不关闭有数据的连接。详见 references/tcp-module-crash-bugs.md
-10. **TCP MIPMODE 0→1 切换 crash** — 在已连接 socket 上切 cache_stream 导致 crash。需在 MIPOPEN 时直接指定 access_mode
-11. **MIPSEND 必须用数据模式** — 不带 data 参数发 `AT+MIPSEND=0,5`，等 `>` 提示后发送。内联格式报 CME ERROR: 50
-9. **MIPCLOSE crash (TCP)** — 所有 MIPCLOSE 模式 (0/1/2) 在数据交换后关闭连接导致模组崩溃。workaround: 不关闭连接或等超时。其他模块的 close 命令需验证
-10. **MIPSEND 必须用数据模式** — inline 格式 `AT+MIPSEND=0,5,"DATA"` 返回 CME ERROR:50。正确: `AT+MIPSEND=0,5` → 等 `>` 提示 → 发送原始数据
-11. **长串口响应需循环读取** — MIPSTATE 查询所有返回 6 行，单次 read() 可能丢数据。用 while 循环 + in_waiting + OK/ERROR 判断终止
-12. **YAML 测试用例引号处理** — `cmd: 'AT+MIPCFG="key",0,1'` 外层单引号内层双引号，解析器需 `.strip("'").strip('"')`
+9. **TCP MIPCLOSE 所有模式在数据交换后 crash** — mode=0/1/2 均导致模组重启。不关闭有数据的连接
+10. **MIPSEND 必须用数据模式** — inline 格式报 CME ERROR:50。正确: `AT+MIPSEND=0,5` → 等 `>` 提示 → 发送原始数据
+11. **长串口响应需循环读取** — MIPSTATE 查询所有返回 6 行，单次 read() 可能丢数据
+12. **新模块插桩必须同时修改两个文件** — 模块源码 + cm_atcmd_extern.c，否则 AT+COVERAGE? 不显示新模块
+13. **COV_BRANCH_START 必须大于所有 COV_STMT 最大 ID** — 否则 COV_STMT(50+) 被计为 branch，导致 stmt/branch 覆盖率混淆。推荐 COV_STMT 用 0-99，COV_BRANCH 用 100+，COV_BRANCH_START=100
+14. **cm_atcmd_extern.c 中的分母硬编码** — sprintf 中 `(_xxx_stmt * 100) / N` 的 N 是 stmt 桩数。每次修改插桩后必须验证分母与实际桩数一致
+15. **adownload.exe 烧录后占用串口** — 烧录完成后 adownload.exe 可能不退出，需 `taskkill /F /IM adownload.exe`
+16. **QCOM_V1.6.exe 占用串口** — 测试机上的 QCOM 工具会占用 COM16，需先关闭
 
 ## 验证清单
 
@@ -232,6 +322,16 @@ def bitmap_snapshot(ser):
 | publish_cmd_combine | 37 | inline/datamode 边界 |
 | datamode_cb | 30 | 数据模式回调 |
 | cfg_platform_devinfo | 29 | devinfo 设置 |
+
+### 关键发现
+
+1. **cm_atcmd_extern.c 桩污染**：cm_atcmd_extern.c 中有独立的桩（ID 1,3,5,6,53,55 等），这些桩被计入了所有模块的覆盖率统计。分析覆盖率时需要排除这些桩。
+
+2. **ML302A_SUPPORT 条件编译**：ML307R 平台不编译 ML302A_SUPPORT 代码，coverage_map 中存在但固件中未编译的桩无法覆盖。
+
+3. **硬件依赖路径**：cm_pwm_enable 失败路径等需要硬件配合才能触发的桩无法通过软件测试覆盖。
+
+4. **覆盖率上限分析**：当覆盖率停滞不增时，必须分析上限原因，不要盲目生成更多用例。计算实际覆盖率 = 已覆盖桩 / (总桩数 - 外部桩 - 条件编译桩 - 硬件依赖桩)。
 
 ### 连接管理
 

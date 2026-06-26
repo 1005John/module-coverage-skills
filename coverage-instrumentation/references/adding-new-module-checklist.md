@@ -38,24 +38,23 @@ cm_atcmd_xxx.c:    cm_cov_xxx_hit() → 使用独立 bitmap + 独立计数器
 **问题**：如果 cm_atcmd_xxx.c 的 `cm_cov_xxx_hit()` 直接调用 `cm_cov_hit()` 然后
 无条件递增 `cov_xxx_stmt_hits`，每次触发都 +1（不是首次命中），导致 >100%。
 
-**修复**：使用 `cm_cov_is_hit()` 判断首次命中（无需独立 bitmap）：
+**修复**：新模块使用独立 bitmap 判断首次命中：
 
 ```c
+static unsigned int cov_xxx_bitmap[(COV_TOTAL_STUBS + 31) / 32] = {0};
 volatile unsigned int cov_xxx_stmt_hits = 0;
 volatile unsigned int cov_xxx_branch_hits = 0;
 
 static void cm_cov_xxx_hit(uint16_t stub_id) {
-    int already = cm_cov_is_hit(stub_id);
-    cm_cov_hit(stub_id);
-    if (!already) {
-        if (stub_id >= BRANCH_START) cov_xxx_branch_hits++;
-        else cov_xxx_stmt_hits++;
-    }
+    unsigned int w = stub_id / 32;
+    unsigned int b = stub_id % 32;
+    if (cov_xxx_bitmap[w] & (1u << b)) return;  /* 已命中，跳过 */
+    cov_xxx_bitmap[w] |= (1u << b);
+    cm_cov_hit(stub_id);  /* 同时注册到全局 bitmap */
+    if (stub_id >= 3000) cov_xxx_branch_hits++;
+    else cov_xxx_stmt_hits++;
 }
 ```
-
-**关键**：`cm_cov_is_hit()` 在 `cm_cov_hit()` 之前调用，检查全局 bitmap 中是否已有该桩。
-`cm_cov_hit()` 会设置全局 bitmap，之后再调用 `cm_cov_is_hit()` 就会返回 1。
 
 ## cm_atcmd_extern.c 的 sprintf 修改模板
 
@@ -83,3 +82,10 @@ static void cm_cov_xxx_hit(uint16_t stub_id) {
 3. **独立 bitmap 大小** — `(COV_TOTAL_STUBS + 31) / 32` 个 uint32，不是字节数
 4. **cm_atcmd_extern.c 的 output[64]** — 每加一个模块就检查一次，超了就扩大
 5. **sprintf 参数数量** — 格式字符串的 %lu 数必须与参数数严格一致
+6. **ATRESP 只能调用一次** — GET_CMD handler 中不能先调用 ATRESP 再调用一次空 ATRESP，后者会覆盖前者。将计算内联到 GET_CMD 中，只调用一次 ATRESP
+7. **cm_atcmd_def.h handler 注册** — AT+COVERAGE 命令必须在 cm_atcmd_def.h 中注册 cmCOVERAGE handler（不能是 NULL），否则命令返回空或 ERROR
+8. **全局变量不能重复定义** — cov_pwm_stmt_hits 只能在 cm_coverage.c 中定义一次，其他文件用 extern。多处定义会导致链接器创建多个独立符号
+9. **固件打包用 SDK 原生工具** — 用 ML302A_package.bat + arelease，不用自定义 Python 打包脚本
+10. **烧录后必须 taskkill adownload.exe** — 否则 COM 端口被锁，后续操作失败
+11. **静态库重建时序** — .o 更新后必须重新生成 onemo-at.lib，然后才能打包 release ZIP。验证：findstr cm_cov_hit onemo-at.lib 和 *.axf
+12. **armcc 优化 static 函数** — 必须用 .h/.c 分离模式，cm_cov_hit() 在独立编译单元中。详见 `references/armcc5-coverage-pitfalls.md`
