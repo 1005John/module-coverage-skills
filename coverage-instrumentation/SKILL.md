@@ -259,7 +259,11 @@ sprintf(output, "+COVERAGE: EXT(...) MQTT(...) ... XXX(%lu%%,%lu%%,%lu/%lu) ALL(
     ...);
 ```
 
-### 验证清单
+#16. **⚠️ instrument.py 生成的插桩文件包含独立桩实现，与全局系统冲突** — 自动插桩脚本会在模块 .c 文件中生成 `#ifdef CM_COVERAGE_ENABLE` 块（含 `cm_cov_xxx_hit()` 函数、独立 bitmap 和计数器）。这会与全局 `cm_coverage.c` 的 `cm_cov_hit()` 冲突：桩写入局部变量，AT+COVERAGE? 读全局变量 → 始终显示 0。**修复**：删除生成的 `#ifdef` 块，改用 `#include "cm_coverage.h"`（或按"新模块插桩完整清单"用独立本地 hit 函数 + `#undef/#define`）
+17. **⚠️ instrument.py 生成的 `#define CM_COVERAGE_ENABLE` 位置错误** — 如果模块 .c 文件不 include 定义了 `CM_COVERAGE_ENABLE` 的头文件，`#ifdef` 判断为 false，所有桩编译为空操作。**验证方法**：编译后 `AT+COVERAGE?` 桩数为 0 但总桩数正确 → 大概率是这个问题
+18. **⚠️ COV_TOTAL_STUBS 实际值可能与模板不同** — 模板设 COV_TOTAL_STUBS=2500，但实际 SDK 中可能是旧值（如 50）。`cm_cov_hit()` 开头有 `if (stub_id >= COV_TOTAL_STUBS) return;`，如果桩 ID 从 100 起但 COV_TOTAL_STUBS=50，所有桩被静默丢弃。**必须在编译前检查实际文件值**
+
+## 验证清单
 
 - [ ] 模块源码有独立计数器和 bitmap
 - [ ] cm_atcmd_extern.c 有 extern 声明

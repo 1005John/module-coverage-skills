@@ -27,8 +27,10 @@ triggers:
 ### 命令
 ```cmd
 cd /d D:\ML307R\SDK
-ML307R.bat DC          # 增量编译（推荐，~2 分钟）
-ML307R.bat DC ALL      # 全量编译（禁止！会覆盖插桩文件）
+ML307R.bat DC          # 增量编译（ML307R）
+ML307C.bat DC-CN       # 增量编译（ML307C DC-CN 变体）（推荐，~2 分钟）
+ML307R.bat DC ALL      # 全量编译（ML307R）
+ML307C.bat DC-CN ALL   # 全量编译（ML307C，注意：会从 ps.7z 恢复源文件）（禁止！会覆盖插桩文件）
 ```
 
 ### 编译前必须清理的缓存
