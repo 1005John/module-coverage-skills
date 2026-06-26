@@ -19,6 +19,7 @@ triggers:
 - references/automatic-test-generation.md — 完全自动测试用例生成与迭代设计
 - references/behavior-assertions-and-bug-candidates.md — 行为断言与潜在 bug 输出规则
 - references/mqtt-coverage-iteration-lessons.md — MQTT 覆盖率闭环实战：数据模式、map 重建、DETAIL 不支持时的分析边界
+- references/dns-coverage-iteration-lessons.md — **DNS 覆盖率迭代经验**：网络依赖前置、手册 Note 过时、底层插桩收益递减、死代码发现
 - coverage-pipeline-main/references/end-to-end-module-coverage-workflow.md — 新模块端到端覆盖率测试实战流程
 - references/http-coverage-v6-v7-lessons.md — HTTP v6/v7 覆盖率迭代经验：datamode 高收益、cached/read 饱和、潜在 bug 列表
 - references/mqtt-v4-v5-iteration-lessons.md — MQTT v4/v5 迭代经验：不要停在用例执行，必须完成分析→生成增量→再执行闭环；MQTTPUB 数据模式和 cached read 高收益
@@ -182,6 +183,60 @@ def classify_uncovered(uncovered_stubs):
 3. **每个阶段独立** — 配置→连接→操作→断开，不要跨阶段复用
 4. **DNS 失败测试放最后** — 会破坏连接状态
 5. **HTTP 的覆盖率计数器可能显示 >100%** — 因为每次触发都累加，用 ALL 的 bitmap 统计为准
+
+## 覆盖率上限分析（关键！）
+
+当覆盖率停滞不增时，必须分析上限原因，不要盲目生成更多用例。
+
+### 分析步骤
+
+1. **对比 coverage_map 桩数 vs AT+COVERAGE? 返回的桩数**
+   - 如果 AT+COVERAGE? 返回的桩数 > coverage_map 中的桩数，说明有外部桩被计入
+   - 典型原因：cm_atcmd_extern.c 中的桩被计入了模块覆盖率
+
+2. **检查条件编译代码**
+   - `#ifdef ML302A_SUPPORT` — ML307R 平台不编译，无法覆盖
+   - `#ifdef ML307A_SUPPORT` — 其他平台差异
+   - 这些桩在 coverage_map 中存在但固件中未编译
+
+3. **检查硬件依赖路径**
+   - cm_pwm_enable 失败路径 — 需要硬件返回错误
+   - 网络超时/断连 — 需要特定网络环境
+   - 这些桩需要硬件配合才能触发
+
+4. **计算实际覆盖率**
+   ```
+   实际覆盖率 = 已覆盖桩 / (总桩数 - 外部桩 - 条件编译桩 - 硬件依赖桩)
+   ```
+
+### PWM 模块案例
+
+```
+总桩数: 66
+- ML302A_SUPPORT: 4 个桩（不可覆盖）
+- cm_atcmd_extern.c: 6 个桩（不是 PWM 桩）
+= PWM 模块实际桩数: 56 个
+
+当前覆盖: 46 个
+实际覆盖率: 46/56 = 82%
+报告覆盖率: 46/66 = 62%
+```
+
+### 常见覆盖率上限原因
+
+| 原因 | 案例 | 可覆盖性 |
+|------|------|----------|
+| 条件编译 (ML302A_SUPPORT) | PWM 模块 4 个桩 | ❌ 不可覆盖 |
+| cm_atcmd_extern.c 桩污染 | PWM 模块 6 个桩 | ❌ 不是模块桩 |
+| 硬件依赖 (cm_pwm_enable 失败) | PWM 模块 1 个桩 | ❌ 需要硬件 |
+| 平台特定代码 | GNSS/Audio 等 | ❌ 需要特定硬件 |
+| 异步回调超时 | MQTT/TCP 等 | ⚠️ 可能触发 |
+
+### 何时停止迭代
+
+- 连续 2 轮新增桩为 0
+- 分析发现覆盖率已达上限
+- 剩余桩都是不可覆盖的原因
 
 ## 验证清单
 
