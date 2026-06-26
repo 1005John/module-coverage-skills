@@ -31,8 +31,9 @@ triggers:
 - references/mqtt-testing-lessons.md — 12 轮迭代经验
 - references/tcp-coverage-iteration-lessons.md — TCP 模块迭代经验（crash bug、数据模式、单连接策略）
 - references/config-templates.md — env.yaml 和 module_config 模板
-- references/ping-module-walkthrough.md — Ping 模块完整 walkthrough（新模块最佳参考）
+- references/test-pc-workspace-scripts.md — **测试电脑工作区脚本**：probe/flash/run/analyze/report 五个脚本用法
 - coverage-analysis/references/automatic-test-generation.md — 完全自动测试用例生成与迭代设计
+- references/at-manual-knowledge-base.md — AT 手册结构化知识库建模方法（命令/参数/响应/URC/状态机/流程/测试生成）
 - references/at-manual-knowledge-base.md — AT 手册结构化知识库建模方法（命令/参数/响应/URC/状态机/流程/测试生成）
 - references/incremental-instrumentation-design.md — Level 2 增量插桩设计方案（git diff 函数级，轮询检测，仓库架构）
 - references/repo-polling-architecture.md — 仓库轮询架构（cron 模型、脚本路径、飞书推送）
@@ -229,7 +230,136 @@ scp /tmp/artifacts/* 52467@172.20.162.21:D:/module_coverage_test/
 grep "cov_pwm_stmt_hits" cm_atcmd_extern.c  # 应有匹配
 ```
 
-## 常见 Pitfalls
+## Kanban 跨机器协调
+
+**设计文档**: references/kanban-coordination-design.md
+
+### 概述
+
+多台机器（编译服务器 + N 台测试电脑）通过 Kanban 共享任务板协调工作。
+执行技能不需要改动，Kanban 是协调层，负责"谁做什么、何时交接"。
+
+### Board 共享方式
+
+```
+编译服务器 192.168.242.120          测试电脑 172.20.162.21
+       │                                    │
+       │    scp 同步 coverage-board.db       │
+       │←──────────────────────────────────→│
+       │                                    │
+  Cron 1分钟轮询                       Cron 1分钟轮询
+  领取 assigned:build-server 的任务    领取 assigned:test-pc1 的任务
+```
+
+### 任务类型
+
+| 任务 | 创建方 | 执行方 | 说明 |
+|------|--------|--------|------|
+| instrument-{module} | 测试PC | 编译服务器 | 插桩+编译 |
+| reinstrument-{module} | 测试PC | 编译服务器 | 根据反馈重插桩 |
+| flash-test-{module} | 编译服务器 | 测试PC | 烧录+测试+分析+报告 |
+
+### 任务生命周期
+
+```
+OPEN → CLAIMED → COMPLETED (成功)
+                → BLOCKED (失败/依赖未满足) → OPEN (解决后重新开放)
+```
+
+### Cron Job 模板
+
+**完整模板**: references/kanban-cron-templates.md — 可直接复制使用的 Cron 配置
+
+#### 编译服务器 (build-server)
+
+```python
+cronjob(
+    name="kanban-build-worker",
+    schedule="1m",
+    skills=["coverage-instrumentation", "coverage-build-flash"],
+    prompt="""
+    你是编译服务器的 Kanban worker。执行以下步骤:
+
+    1. 拉取最新 board:
+       scp 52467@172.20.162.21:D:/coverage-board.db /tmp/coverage-board.db
+
+    2. 检查 assigned 给 build-server 的 OPEN 任务:
+       kanban_list(filter="assignee:build-server, status:open")
+
+    3. 如果有任务:
+       a. kanban_claim(task_id)
+       b. 读取任务描述，执行:
+          - instrument 类型: 执行 coverage-instrumentation 插桩
+          - reinstrument 类型: 根据 description 中的反馈重新插桩
+          - 任何类型: 编译 (ML307R.bat DC 或 ML307C.bat DC-CN)
+       c. scp 固件到测试PC:
+          scp fw.zip 52467@172.20.162.21:D:/通信模组/at_kb_runs/
+       d. kanban_complete(task_id, result="固件:fw.zip, 桩数:N")
+       e. 如果失败: kanban_block(task_id, reason="失败原因")
+
+    4. 推送更新后的 board:
+       scp /tmp/coverage-board.db 52467@172.20.162.21:D:/coverage-board.db
+
+    5. 如果没有任务: 静默退出
+    """
+)
+```
+
+#### 测试电脑 (test-pc)
+
+```python
+cronjob(
+    name="kanban-test-worker",
+    schedule="1m",
+    skills=["coverage-build-flash", "coverage-test-execution",
+            "coverage-analysis", "coverage-report"],
+    prompt="""
+    你是测试电脑的 Kanban worker。执行以下步骤:
+
+    1. 检查 assigned 给本机的 OPEN 任务:
+       kanban_list(filter="assignee:test-pc1, status:open")
+
+    2. 如果有任务:
+       a. kanban_claim(task_id)
+       b. 读取任务描述中的固件路径
+       c. 烧录: scripts/flash_module.py <firmware> --config env.yaml
+       d. 验证 AT 口: scripts/probe_com16.py
+       e. 执行测试: scripts/run_tests.py generated_tests.yaml --run-id <run_id>
+       f. 分析: scripts/analyze_coverage.py runs/<run_id>
+       g. 报告: scripts/generate_report.py runs/<run_id>
+       h. kanban_complete(task_id, result="覆盖率:stmt%/branch%, 报告路径")
+       i. 如果覆盖率不达标: 创建新任务 "reinstrument-{module}" 
+          assignee=build-server, desc="需要插桩的具体文件和原因"
+
+    3. 如果没有任务: 检查 build_status.json 是否有新固件
+       如果有: 创建任务 "flash-test-{module}" assignee=自己
+       如果没有: 静默退出
+
+    4. 如果测试失败(crash等): kanban_block(reason="模组crash, 需要拔插USB")
+    """
+)
+```
+
+### Board 初始化
+
+```bash
+# 在测试电脑上执行
+hermes kanban init --board coverage-pipeline
+
+# 创建初始任务标签
+hermes kanban create "等待编译服务器就绪" --tags setup --assignee build-server
+```
+
+### 多 PC 扩展
+
+每新增一台测试电脑:
+1. 配置该 PC 的 Kanban tenant (如 test-pc2-ml302a)
+2. 配置 Cron job，assignee 改为对应 ID
+3. Board 自动通过 scp 同步
+
+### 待决事项
+
+见 references/kanban-coordination-design.md 第 9 节。
 
 1. **DC ALL 会覆盖插桩文件** — 永远用 DC（增量），手动删 .o 触发重编
 2. **cm_coverage.c 的 COV_TOTAL_STUBS 必须 >= 最大桩 ID+1** — HTTP 分支桩到 2211，必须设 2500

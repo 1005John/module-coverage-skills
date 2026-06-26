@@ -98,6 +98,29 @@ release.zip ──scp──→ /tmp/fw.zip ──scp──→ D:\通信模组\at
 - SSH 服务 (端口 22)
 - COM16 串口 (115200 baud)
 
+## Kanban 协调层
+
+两台机器通过 Kanban 共享任务板协调，每 1 分钟通过 scp 同步：
+
+```
+编译服务器 192.168.242.120          测试电脑 172.20.162.21
+       │                                    │
+       │    scp 同步 coverage-board.db       │
+       │←──────────────────────────────────→│
+       │                                    │
+  Cron: kanban-build-worker            Cron: kanban-test-worker
+  领取 instrument/reinstrument 任务    领取 flash-test 任务
+  执行: 插桩 + 编译 + scp 固件         执行: 烧录 + 测试 + 分析 + 报告
+```
+
+任务流转：
+1. 测试PC 创建任务 → "插桩 DNS" → assignee: build-server
+2. 编译服务器 领取 → 插桩+编译 → 完成 → scp 固件到测试PC
+3. 测试PC 检测完成 → 下载固件 → 烧录 → 测试 → 报告
+4. 如果覆盖率不足 → 创建新任务 → "重插桩 DNS" → 回到步骤 2
+
+详见: coverage-pipeline-main/references/kanban-coordination-design.md
+
 ## 注意事项
 
 1. **编译禁止 DC ALL** — 会从 ps.7z 恢复源文件，覆盖插桩
