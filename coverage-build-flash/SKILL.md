@@ -27,10 +27,10 @@ triggers:
 ### 命令
 ```cmd
 cd /d D:\ML307R\SDK
-ML307R.bat DC          # 增量编译（ML307R）
-ML307C.bat DC-CN       # 增量编译（ML307C DC-CN 变体）（推荐，~2 分钟）
-ML307R.bat DC ALL      # 全量编译（ML307R）
-ML307C.bat DC-CN ALL   # 全量编译（ML307C，注意：会从 ps.7z 恢复源文件）（禁止！会覆盖插桩文件）
+ML307R.bat DC          # 增量编译（ML307R，推荐，~2 分钟）
+ML307R.bat DC ALL      # 全量编译（ML307R，禁止！会覆盖插桩文件）
+ML307C.bat DC-CN       # 增量编译（ML307C）
+ML307C.bat DC-CN ALL   # 全量编译（ML307C，注意：会从 ps.7z 恢复源文件）
 ```
 
 ### 编译前必须清理的缓存
@@ -38,14 +38,16 @@ ML307C.bat DC-CN ALL   # 全量编译（ML307C，注意：会从 ps.7z 恢复源
 
 修改 .h 或 .c 后，必须删除对应的 .o 和缓存头文件：
 ```cmd
+:: ⚠️ .lib 必须删除！路径是 obj_PMD2NONE/ 下，不是 obj_onemo_onemo/ 下
+del /q SDK\tavor\Arbel\obj_PMD2NONE\onemo-onemo.lib
 :: AT 命令层 .o + 依赖文件
-del /q D:\\ML307R\\SDK\\tavor\\Arbel\\obj_PMD2NONE\\obj_onemo_onemo\\obj_onemo_at\\cm_atcmd_http.*
+del /q SDK\tavor\Arbel\obj_PMD2NONE\obj_onemo_onemo\obj_onemo_at\cm_atcmd_xxx.*
 :: 覆盖率模块 .o（修改 cm_coverage.h 的 COV_TOTAL_STUBS 时必须删）
-del /q D:\\ML307R\\SDK\\tavor\\Arbel\\obj_PMD2NONE\\obj_onemo_onemo\\obj_onemo_coverage\\cm_coverage.*
+del /q SDK\tavor\Arbel\obj_PMD2NONE\obj_onemo_onemo\obj_onemo_coverage\cm_coverage.*
 :: 缓存头文件（构建系统会复制 .h 到 obj 目录）
-del /q D:\\ML307R\\SDK\\tavor\\Arbel\\obj_PMD2NONE\\inc\\cm_coverage.h
+del /q SDK\tavor\Arbel\obj_PMD2NONE\inc\cm_coverage.h
 :: pack_c.via — 构建系统用它缓存编译参数，不删则增量编译可能不重编
-del /q D:\\ML307R\\SDK\\tavor\\Arbel\\obj_PMD2NONE\\obj_onemo_onemo\\obj_onemo_at\\pack_c.via
+del /q SDK\tavor\Arbel\obj_PMD2NONE\obj_onemo_onemo\obj_onemo_at\pack_c.via
 ```
 
 ⚠️ cm_coverage.c 在 `onemo/coverage/src/`（不是 onemo/at/src/），其 .o 路径是 `obj_onemo_coverage/`
@@ -156,6 +158,7 @@ del /q D:\ML307R\SDK\tavor\Arbel\obj_PMD2NONE\obj_onemo_onemo\obj_onemo_<module>
 ## 常见 Pitfalls
 
 1. **DC ALL 会从 ps.7z 恢复源文件** — 所有插桩修改会被覆盖
+0. **⚠️ 必须删 .lib** — 路径是 `obj_PMD2NONE/onemo-onemo.lib`（不是 `obj_onemo_onemo/` 下）。不删 .lib 即使重编 .o，链接器仍用旧 .lib 中的旧 .o
 2. **SSH 执行 bat 需要 cmd /c 前缀** — `cmd /c ML307R.bat DC`
 3. **ReliableData.bin 缺失** — DC ALL 后 bin/ 被清空。**自愈方法**：再跑一次 DC 编译自动生成。不需要手动提取。
 4. **编译成功但 release zip 未生成** — `target\ML307R-DC-MBRH0S01\` 只有 `DBG.7z` 说明打包失败（通常 ReliableData.bin 问题），再跑 DC 即可。

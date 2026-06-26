@@ -199,36 +199,33 @@ def rebuild_coverage_map(source_path, module_name):
 
 ### 文件 1: 模块源码 (如 cm_atcmd_ping.c)
 
-1. 添加独立计数器和 bitmap：
+使用 `cm_cov_is_hit()` + 本地 hit 函数（见下方"正确的插桩模板"章节）：
+
 ```c
-#ifdef CM_COVERAGE_ENABLE
+#define CM_COVERAGE_ENABLE
+#include "cm_coverage.h"
+#undef COV_STMT
+#undef COV_BRANCH_T
+#undef COV_BRANCH_F
+
 volatile unsigned int cov_xxx_stmt_hits = 0;
 volatile unsigned int cov_xxx_branch_hits = 0;
-#define COV_XXX_TOTAL 50
-#define COV_XXX_BRANCH_START 30
-static unsigned int cov_xxx_bitmap[(COV_XXX_TOTAL + 31) / 32] = {0};
 
-static void cm_cov_xxx_hit(unsigned short id) {
-    if (id >= COV_XXX_TOTAL) return;
-    unsigned int w = id / 32;
-    unsigned int b = id % 32;
-    if (!(cov_xxx_bitmap[w] & (1u << b))) {
-        cov_xxx_bitmap[w] |= (1u << b);
-        if (id < COV_XXX_BRANCH_START) cov_xxx_stmt_hits++;
-        else cov_xxx_branch_hits++;
+static void cm_cov_xxx_hit(uint16_t stub_id) {
+    int already = cm_cov_is_hit(stub_id);
+    cm_cov_hit(stub_id);
+    if (!already) {
+        if (stub_id >= BRANCH_START) cov_xxx_branch_hits++;
+        else cov_xxx_stmt_hits++;
     }
 }
-#define COV_STMT(id) cm_cov_xxx_hit(id)
-#define COV_BRANCH_T(id) cm_cov_xxx_hit(id)
-#define COV_BRANCH_F(id) cm_cov_xxx_hit(id)
-#else
-#define COV_STMT(id) ((void)0)
-#define COV_BRANCH_T(id) ((void)0)
-#define COV_BRANCH_F(id) ((void)0)
-#endif
+
+#define COV_STMT(id)        cm_cov_xxx_hit(id)
+#define COV_BRANCH_T(id)    cm_cov_xxx_hit(id)
+#define COV_BRANCH_F(id)    cm_cov_xxx_hit(id)
 ```
 
-2. 在函数入口、if/else 体、关键执行行插入 COV_STMT/COV_BRANCH_T/COV_BRANCH_F
+**关键**：必须用 `cm_cov_is_hit()` 判断首次命中，不能用独立 bitmap（会与全局 bitmap 冲突导致 >100%）。
 
 ### 文件 2: cm_atcmd_extern.c（必须！）
 
@@ -259,11 +256,7 @@ sprintf(output, "+COVERAGE: EXT(...) MQTT(...) ... XXX(%lu%%,%lu%%,%lu/%lu) ALL(
     ...);
 ```
 
-#16. **⚠️ instrument.py 生成的插桩文件包含独立桩实现，与全局系统冲突** — 自动插桩脚本会在模块 .c 文件中生成 `#ifdef CM_COVERAGE_ENABLE` 块（含 `cm_cov_xxx_hit()` 函数、独立 bitmap 和计数器）。这会与全局 `cm_coverage.c` 的 `cm_cov_hit()` 冲突：桩写入局部变量，AT+COVERAGE? 读全局变量 → 始终显示 0。**修复**：删除生成的 `#ifdef` 块，改用 `#include "cm_coverage.h"`（或按"新模块插桩完整清单"用独立本地 hit 函数 + `#undef/#define`）
-17. **⚠️ instrument.py 生成的 `#define CM_COVERAGE_ENABLE` 位置错误** — 如果模块 .c 文件不 include 定义了 `CM_COVERAGE_ENABLE` 的头文件，`#ifdef` 判断为 false，所有桩编译为空操作。**验证方法**：编译后 `AT+COVERAGE?` 桩数为 0 但总桩数正确 → 大概率是这个问题
-18. **⚠️ COV_TOTAL_STUBS 实际值可能与模板不同** — 模板设 COV_TOTAL_STUBS=2500，但实际 SDK 中可能是旧值（如 50）。`cm_cov_hit()` 开头有 `if (stub_id >= COV_TOTAL_STUBS) return;`，如果桩 ID 从 100 起但 COV_TOTAL_STUBS=50，所有桩被静默丢弃。**必须在编译前检查实际文件值**
-
-## 验证清单
+### 验证清单
 
 - [ ] 模块源码有独立计数器和 bitmap
 - [ ] cm_atcmd_extern.c 有 extern 声明
@@ -498,3 +491,116 @@ if in_multiline:
 - [ ] 执行几条 AT 命令后 HTTP 桩数 > 0
 - [ ] coverage_map.json 生成且桩数与实际一致
 - [ ] 无 unreachable / expected a statement / too few arguments 错误
+
+## Ping 模块插桩实测经验 (2026-06-26) - 5 层问题分析
+
+### 问题 1：extern.c 缺少新模块声明
+- 服务器只加了 PWM 的 extern 声明和 sprintf，没加 PING
+- 结果：AT+COVERAGE? 不显示 PING 模块
+- **教训**：每次新模块插桩，必须更新 cm_atcmd_extern.c
+
+### 问题 2：新模块没有定义 per-module 计数器变量
+- extern.c 声明了 extern volatile unsigned int cov_ping_stmt_hits
+- 但 cm_atcmd_ping.c 里没有定义这个变量
+- 结果：链接报 Undefined symbol cov_ping_stmt_hits
+- **根因**：instrument.py 只插桩 COV_* 宏调用，不生成计数器变量定义
+
+### 问题 3：CM_COVERAGE_ENABLE 未定义
+- cm_coverage.h 里 COV_* 宏被 #ifdef CM_COVERAGE_ENABLE 包裹
+- cm_atcmd_ping.c 不 include 定义了这个宏的头文件
+- 结果：所有桩编译为空操作 ((void)0)，AT+COVERAGE? 始终显示 0
+
+### 问题 4：.lib 缓存导致增量编译不生效
+- .lib 实际路径是 obj_PMD2NONE/onemo-onemo.lib
+- 不是 obj_PMD2NONE/obj_onemo_onemo/onemo-onemo.lib
+- 只删 .o 不够，必须删 .lib + .o + pack_c.via
+
+### 问题 5：全局 cm_cov_hit() 和 per-module 计数器不连通
+- cm_cov_hit() 只递增全局 cov_pwm_stmt_hits
+- extern.c 读的是 per-module cov_ping_stmt_hits
+- **必须用 cm_cov_is_hit() + 本地 cm_cov_ping_hit() 桥接**
+
+## 正确的插桩模板（2026-06-26 验证）
+
+### 模块 .c 文件必须这样写：
+
+```c
+#define CM_COVERAGE_ENABLE
+#include "cm_coverage.h"
+#undef COV_STMT
+#undef COV_BRANCH_T
+#undef COV_BRANCH_F
+
+volatile unsigned int cov_xxx_stmt_hits = 0;
+volatile unsigned int cov_xxx_branch_hits = 0;
+
+static void cm_cov_xxx_hit(uint16_t stub_id) {
+    int already = cm_cov_is_hit(stub_id);
+    cm_cov_hit(stub_id);
+    if (!already) {
+        if (stub_id >= 200) cov_xxx_branch_hits++;
+        else cov_xxx_stmt_hits++;
+    }
+}
+
+#define COV_STMT(id)        cm_cov_xxx_hit(id)
+#define COV_BRANCH_T(id)    cm_cov_xxx_hit(id)
+#define COV_BRANCH_F(id)    cm_cov_xxx_hit(id)
+```
+
+### cm_coverage.c 必须加 cm_cov_is_hit() 函数：
+
+```c
+int cm_cov_is_hit(uint16_t stub_id) {
+    if (stub_id >= COV_TOTAL_STUBS) return 0;
+    unsigned int w = stub_id / 32;
+    unsigned int b = stub_id % 32;
+    return (cov_bitmap[w] & (1u << b)) != 0;
+}
+```
+
+### 编译前必须删：.lib + .o + .d + .pp + pack_c.via
+
+```cmd
+del /q SDK\tavor\Arbel\obj_PMD2NONE\onemo-onemo.lib
+del /q SDK\tavor\Arbel\obj_PMD2NONE\obj_onemo_onemo\obj_onemo_at\*.o
+del /q SDK\tavor\Arbel\obj_PMD2NONE\obj_onemo_onemo\obj_onemo_at\*.d
+del /q SDK\tavor\Arbel\obj_PMD2NONE\obj_onemo_onemo\obj_onemo_at\*.pp
+del /q SDK\tavor\Arbel\obj_PMD2NONE\obj_onemo_onemo\obj_onemo_at\pack_c.via
+```
+
+## 新模块插桩 Checklist（5 步，缺一不可）
+
+### 步骤 1：instrument_v2.py 插桩
+- 运行插桩脚本生成 COV_STMT/COV_BRANCH_T 宏调用
+- 输出：插桩后的 .c 文件和 coverage_map.json
+
+### 步骤 2：在 .c 文件中添加正确的桩实现
+- 添加 #define CM_COVERAGE_ENABLE
+- 添加 #include "cm_coverage.h"
+- 添加 #undef COV_STMT/COV_BRANCH_T/COV_BRANCH_F
+- 添加 per-module 计数器变量
+- 添加 cm_cov_xxx_hit() 函数（使用 cm_cov_is_hit() 桥接）
+- 重新定义 COV_STMT/COV_BRANCH_T/COV_BRANCH_F 宏
+
+### 步骤 3：更新 cm_atcmd_extern.c
+- 添加 extern 声明（cov_xxx_stmt_hits, cov_xxx_branch_hits）
+- 在 GET_CMD handler 中添加变量和总计
+- 修改 sprintf 格式字符串添加新模块输出
+
+### 步骤 4：确认 cm_coverage.c 有 cm_cov_is_hit() 函数
+- 如果没有，添加这个函数
+
+### 步骤 5：清理缓存并编译
+- 删除 .lib + .o + .d + .pp + pack_c.via
+- 执行全量编译：ML307C.bat DC-CN ALL
+- 验证编译成功
+
+### 验证清单
+- [ ] .c 文件有正确的桩实现（不是 instrument.py 生成的局部桩）
+- [ ] cm_atcmd_extern.c 有 extern 声明和 sprintf 输出
+- [ ] cm_coverage.c 有 cm_cov_is_hit() 函数
+- [ ] 编译前删除 .lib + .o + pack_c.via
+- [ ] 编译成功，无 Undefined symbol 错误
+- [ ] 烧录后 AT+COVERAGE? 显示新模块
+- [ ] 执行 AT 命令后桩计数 > 0

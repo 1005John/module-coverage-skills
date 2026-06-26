@@ -33,6 +33,7 @@
 #define COV_BRANCH_F(id)    cm_cov_hit(id)
 
 extern void     cm_cov_hit(uint16_t stub_id);
+extern int      cm_cov_is_hit(uint16_t stub_id);
 extern void     cm_cov_init(void);
 extern void     cm_cov_enable(int enable);
 extern uint32_t cm_cov_get_stmt_hits(void);
